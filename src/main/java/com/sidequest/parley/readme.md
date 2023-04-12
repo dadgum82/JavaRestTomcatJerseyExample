@@ -1,25 +1,4 @@
-## JavaRestTomcatJerseyExample
-This project is to make a rest api backend for a home grown chat app.
-
-
 ## Folder Structure
-```
-- project-root/
-    - src/
-        - main/
-            - java/
-                - com/
-                    - yourcompany/
-                        - yourproject/
-                            - controller/
-                            - model/
-                            - service/
-                            - util/
-            - resources/
-                - chat-files/
-    - pom.xml
-    - readme.md
-```
 
 Here's a brief explanation of the main folders:
 
