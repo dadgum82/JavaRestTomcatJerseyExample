@@ -14,11 +14,13 @@
   <servlet>
     <servlet-name>Jersey REST Service</servlet-name>
     <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
-     <!-- Register resources and providers under com.vogella.jersey.first package. -->
+    
     <init-param>
         <param-name>jersey.config.server.provider.packages</param-name>
-       <!-- <param-value>com.vogella.jersey.first</param-value> -->
-       <param-value>com.sidequest.parley.resources</param-value>
+    <!-- here is where you point to the package that is the entry point to the application -->
+    <!-- There can be many entry points but ours is in the controller folder which is referenced -->
+    <!-- by its Java "package" -->
+       <param-value>com.sidequest.parley.controller</param-value>
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>

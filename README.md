@@ -9,14 +9,17 @@ This project is to make a rest api backend for a home grown chat app.
         - main/
             - java/
                 - com/
-                    - yourcompany/
-                        - yourproject/
+                    - sidequest/
+                        - parley/
                             - controller/
                             - model/
                             - service/
                             - util/
             - resources/
                 - chat-files/
+                - users/
+                    - users.txt
+                - config.properties
     - pom.xml
     - readme.md
 ```
