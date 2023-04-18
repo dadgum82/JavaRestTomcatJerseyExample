@@ -1,11 +1,15 @@
 package com.sidequest.parley.controller;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObjectBuilder;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -19,25 +23,47 @@ import com.sidequest.parley.service.UserService;
 
 @Path("/users")
 public class UserController {
+	/*
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<User> getUsers() {
         UserService us = new UserService(); 
         return us.getUsers();
     }
+    */
+    
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getUsers() throws FileNotFoundException, IOException {
+        UserService us = new UserService();
+        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+        for (User u : us.getUsers()) {
+            JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+            objectBuilder.add("id", u.getId());
+            objectBuilder.add("name", u.getName());
+            arrayBuilder.add(objectBuilder.build());
+        }
+        return Json.createObjectBuilder().add("users", arrayBuilder.build()).build().toString();
+    }
     
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<User> getUserById(@PathParam("id") int id) {
+    public User getUserById(@PathParam("id") int id) throws FileNotFoundException, IOException {
         UserService us = new UserService(); 
-        return us.getUser(id);
+        User user = us.getUser(id);
+        if(user != null) {
+            return user;
+        } else {
+            // Return a 404 response if the user isn't found
+            throw new NotFoundException();
+        }
     }
     
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Optional<Object> createUser(UserInput userInput) throws IOException {
+    public User createUser(UserInput userInput) throws IOException {
         UserService us = new UserService();
         return us.createUser(userInput.getName());
     }

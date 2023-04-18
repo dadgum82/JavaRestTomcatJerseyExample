@@ -1,6 +1,10 @@
 package com.sidequest.parley.util;
 
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -8,6 +12,14 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
+import java.util.ArrayList;
+import javax.xml.bind.annotation.XmlType;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 
 import com.sidequest.parley.model.User;
 
@@ -57,7 +69,21 @@ public class FileHandler {
 			return null;
 		}
 	}
-
+	
+	public List<String[]> readCSVFile() throws FileNotFoundException, IOException {
+	    List<String[]> records = new ArrayList<>();
+	    try (CSVParser parser = new CSVParser(new FileReader(this.filePath.toString()), CSVFormat.DEFAULT)) {
+	        for (CSVRecord record : parser) {
+	            String[] fields = new String[record.size()];
+	            for (int i = 0; i < record.size(); i++) {
+	                fields[i] = record.get(i);
+	            }
+	            records.add(fields);
+	        }
+	    }
+	    return records;
+	}
+	
 	public boolean appendMessageToFile(String message) {
 		Path filePath = this.getFilePath();
 		try {
@@ -70,4 +96,32 @@ public class FileHandler {
 			return false;
 		}
 	}
+	
+	public boolean appendMessageToFile(String[] content) {
+		try {
+			CSVPrinter printer = new CSVPrinter(new FileWriter(filePath.toString(), true), CSVFormat.DEFAULT);
+			printer.printRecord(content);
+			//Files.write(filePath, content.getBytes(StandardCharsets.UTF_8) , StandardOpenOption.APPEND);
+			printer.flush();
+			printer.close();
+			return true;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+	} 
+	
+	/*
+	CSVPrinter printer = new CSVPrinter(new FileWriter("employees.csv"), CSVFormat.DEFAULT);
+	printer.printRecord(employee);
+	//create header row
+	printer.printRecord("FirstName", "LastName", "Email", "Department");
+	// create data rows
+	for (String[] employee : employees) {
+	    printer.printRecord(employee);
+	}
+	//close the printer after the file is complete
+	printer.flush();
+	printer.close();
+	*/
 }
