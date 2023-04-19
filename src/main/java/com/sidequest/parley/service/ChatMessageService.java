@@ -2,26 +2,13 @@ package com.sidequest.parley.service;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.sidequest.parley.model.ChatMessage;
 import com.sidequest.parley.model.ChatMessageInput;
-import com.sidequest.parley.model.User;
-import com.sidequest.parley.util.Config;
-import com.sidequest.parley.util.FileHandler;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.csv.CSVRecord;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.sidequest.parley.model.User;
 import com.sidequest.parley.util.Config;
 import com.sidequest.parley.util.FileHandler;
@@ -41,35 +28,6 @@ public class ChatMessageService {
 		this.fileHandler = new FileHandler(CHAT_DIRECTORY, CHAT_FILE);
 		this.initalizeChat();
 	}
-
-/*	private void initalizeChat() throws FileNotFoundException, IOException {
-		int counter = 0;
-		boolean checkFile = this.fileHandler.fileExists();
-		if (checkFile) {
-			chatMessages = new ArrayList<>();
-			List<String> chatText = fileHandler.readFile();
-			for (String line : chatText) {
-				if (line.length() > 0 && line.contains(",")) {
-					System.out.println(line);
-					int id = Integer.parseInt(line.split(",")[0]);
-					String strDateTime = line.split(",")[1];
-					int userIdSender = Integer.valueOf(line.split(",")[2]);
-					String content = line.split(",")[3];
-
-					UserService us = new UserService();
-					User userSender = us.getUser(userIdSender);
-					LocalDateTime ldt = LocalDateTime.parse(strDateTime, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-					ChatMessage cm = new ChatMessage(id, ldt, userSender, content);
-					chatMessages.add(cm);
-					counter++;
-				}
-			}
-		} else {
-			fileHandler.createFile();
-		}
-		this.CHAT_MESSAGE_COUNT = counter;
-
-	} */
 	
 	private void initalizeChat() throws FileNotFoundException, IOException {
 		int counter = 0;
