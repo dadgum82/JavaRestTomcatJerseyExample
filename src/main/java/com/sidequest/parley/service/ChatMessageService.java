@@ -82,11 +82,11 @@ public class ChatMessageService {
 					//System.out.println(line);
 					int id = Integer.parseInt(line[0]);
 					String strDateTime = line[1];
-					String userNameSender = line[2];
+					int userID= Integer.valueOf(line[2]);
 					String content = line[3];
 
 					UserService us = new UserService();
-					User userSender = us.getUser(userNameSender);
+					User userSender = us.getUser(userID);
 					LocalDateTime ldt = LocalDateTime.parse(strDateTime, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 					ChatMessage cm = new ChatMessage(id, ldt, userSender, content);
 					chatMessages.add(cm);

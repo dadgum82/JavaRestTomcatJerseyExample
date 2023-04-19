@@ -32,7 +32,7 @@ public class ChatMessage {
     }
     
     public String[] toArray() {
-    	String[] fields = {String.valueOf(this.id), this.timestamp.toString(),this.sender.getName(),this.content};
+    	String[] fields = {String.valueOf(this.id), this.timestamp.toString(),String.valueOf(this.sender.getId()),this.content};
 		return fields;
     }
     
