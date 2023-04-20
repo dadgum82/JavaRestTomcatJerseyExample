@@ -1,8 +1,18 @@
-## JavaRestTomcatJerseyExample
-This project is to make a rest api backend for a home grown chat app.
+# JavaRestTomcatJerseyExample
 
+This project is to create a REST API backend for a homegrown chat app.
+
+## Environmental variable
+com.sidequest.parley.util.Config has an environmental variable that points to the config.properties file.
+
+Maven most likely does this correct but I didn't want to figure it out.
+
+Variable           | Value
+------------------ | ----------------------
+PARLEY_CONFIG_FILE | < ABSOLUTE PATH >\\config.properties
 
 ## Folder Structure
+
 ```
 - project-root/
     - src/
@@ -36,94 +46,135 @@ You can store the chat files within the resources folder in a directory called `
 
 ## API Endpoints
 
-# ChatMessageController API Documentation
+# UserController API Documentation
 
-## /chat/{id} [GET]
+### Retrieve all users
 
-Retrieves all chat messages for a specific chat room based on the provided `chatID`.
+Endpoint: `GET /users`
 
-### Request Parameters
+Retrieves a list of all users in JSON format.
 
-Parameter | Type | Required | Description
---------- | ---- | -------- | -----------
-`id`      | int  | Yes      | The ID of the chat room to retrieve messages for.
+#### Success Response
 
-### Response
+**Status Code:** 200 OK
 
-Returns a JSON object containing an array of chat messages. Each chat message object contains the following fields:
-
-Field       | Type   | Description
-----------  | ------ | -----------
-`sender`    | Object | Contains the ID and name of the user who sent the message.
-`timestamp` | Object | Contains the full date and time the message was sent.
-`id`        | int    | The unique ID of the chat message.
-`content`   | String | The content of the chat message.
-
-### Example Request
-
-```
-GET /chat/1
-```
-
-### Example Response
-
+**Response Body:**
 ```json
 {
-  "messages": [
+  "users": [
     {
-      "sender": {
-        "id": 1,
-        "name": "John Doe"
-      },
-      "timestamp": {
-        "year": 2022,
-        "monthValue": 1,
-        "dayOfMonth": 1,
-        "hour": 0,
-        "minute": 0,
-        "second": 0,
-        "nano": 0,
-        "month": "JANUARY",
-        "dayOfWeek": "SATURDAY",
-        "dayOfYear": 1,
-        "chronology": {
-          "calendarType": "iso8601",
-          "id": "ISO"
-        }
-      },
       "id": 1,
-      "content": "Hello world!"
+      "name": "John Doe"
+    },
+    {
+      "id": 2,
+      "name": "Sally Doe"
     }
   ]
 }
 ```
 
-## /chat [POST]
+#### Error Responses
 
-Creates a new chat message for the specified chat room.
+**Status Code:** 404 Not Found
 
-### Request Body
+If the file is not found or an I/O error occurs.
+
+### Retrieve a user by ID
+
+Endpoint: `GET /users/{id}`
+
+Retrieves a user by their ID.
+
+#### Request Parameters
+
+Parameter | Type   | Description
+--------- | ------ | -----------
+id        | int    | The ID of the user to retrieve.
+
+#### Success Response
+
+**Status Code:** 200 OK
+
+**Response Body:**
+```json
+{
+  "id": 1,
+  "name": "John Doe"
+}
+```
+
+#### Error Responses
+
+**Status Code:** 404 Not Found
+
+If the user with the specified ID is not found.
+
+### Create a new user
+
+Endpoint: `POST /users`
+
+Creates a new user using the provided input data.
+
+#### Request Body
 
 The request body must be a JSON object containing the following fields:
 
-Field      | Type | Required | Description
----------  | ---- | -------- | -----------
-`chatId`   | int  | Yes      | The ID of the chat room to create the message in.
-`senderId` | int  | Yes      | The ID of the user who sent the message.
-`message`  | int  | Yes      | The content of the chat message.
+Field | Type   | Required | Description
+----- | ------ | -------- | -----------
+name  | string | Yes      | The name of the new user.
 
-### Response
+#### Success Response
+
+**Status Code:** 200 OK
+
+**Response Body:**
+```json
+{
+  "id": 3,
+  "name": "Bob Smith"
+}
+```
+
+#### Error Responses
+
+**Status Code:** 500 Internal Server Error
+
+If an I/O error occurs.
+
+
+
+
+# ChatMessageController API Documentation
+
+#### Create Chat Message
+
+Endpoint: `POST /chat`
+
+Creates a new chat message for the specified chat room.
+
+#### Request Body
+
+The request body must be a JSON object containing the following fields:
+
+| Field      | Type | Required | Description                          |
+| ---------- | ---- | -------- | ------------------------------------|
+| `chatId`   | int  | Yes      | The ID of the chat room to create the message in. |
+| `senderId` | int  | Yes      | The ID of the user who sent the message.         |
+| `message`  | int  | Yes      | The content of the chat message.                |
+
+#### Response
 
 Returns a JSON object containing the details of the newly created chat message.
 
-Field       | Type   | Description
-----------  | ------ | -----------
-`sender`    | Object | Contains the ID and name of the user who sent the message.
-`timestamp` | Object | Contains the full date and time the message was sent.
-`id`        | int    | The unique ID of the chat message.
-`content`   | String | The content of the chat message.
+| Field       | Type   | Description                          |
+| ------------| ------ | -------------------------------------|
+| `sender`    | Object | Contains the ID and name of the user who sent the message. |
+| `timestamp` | Object | Contains the full date and time the message was sent.        |
+| `id`        | int    | The unique ID of the chat message.                           |
+| `content`   | String | The content of the chat message.                             |
 
-### Example Request
+#### Example Request
 
 ```
 POST /chat
@@ -136,122 +187,33 @@ Content-Type: application/json
 }
 ```
 
-### Example Response
+#### Example Response
 
 ```json
 {
-  "sender": {
-    "id": 1,
-    "name": "John Doe"
-  },
-  "timestamp": {
-    "year": 2022,
-    "monthValue": 1,
-    "dayOfMonth": 1,
-    "hour": 0,
-    "minute": 0,
-    "second": 0,
-    "nano": 0,
-    "month": "JANUARY",
-    "dayOfWeek": "SATURDAY",
-    "dayOfYear": 1,
-    "chronology": {
-      "calendarType":
-
-# UserController API Documentation
-
-## Retrieve all users
-
-Endpoint: `GET /users`
-
-Retrieves a list of all users in JSON format.
-
-### Response
-
-#### Success
-**Status code:** 200 OK
-
-**Response Body:**
-```json
-{
-  "users": [
-    {
-      "id": 1,
-      "name": "John Doe"
+    "id": 3,
+    "content": "This is another message",
+    "timestamp": {
+        "year": 2023,
+        "monthValue": 4,
+        "dayOfMonth": 20,
+        "hour": 8,
+        "minute": 52,
+        "second": 49,
+        "nano": 538765400,
+        "month": "APRIL",
+        "dayOfWeek": "THURSDAY",
+        "dayOfYear": 110,
+        "chronology": {
+            "id": "ISO",
+            "calendarType": "iso8601"
+        }
     },
-    {
-      "id": 2,
-      "name": "Jane Doe"
+    "sender": {
+        "id": 1,
+        "name": "John Doe"
     }
-  ]
 }
 ```
-
-#### Errors
-**Status code:** 404 Not Found
-
-If the file is not found or an I/O error occurs.
-
-## Retrieve a user by ID
-
-Endpoint: `GET /users/{id}`
-
-Retrieves a user by their ID.
-
-### Request Parameters
-
-| Parameter | Type   | Description         |
-| --------- | ------ | ------------------- |
-| id        | integer | The ID of the user to retrieve. |
-
-### Response
-
-#### Success
-**Status code:** 200 OK
-
-**Response Body:**
-```json
-{
-  "id": 1,
-  "name": "John Doe"
-}
-```
-
-#### Errors
-**Status code:** 404 Not Found
-
-If the user with the specified ID is not found.
-
-## Create a new user
-
-Endpoint: `POST /users`
-
-Creates a new user using the provided input data.
-
-### Request Body
-
-The request body is a JSON object containing the following required field:
-
-| Field  | Type   | Description        |
-| ------ | ------ | ------------------ |
-| name | string | The name of the new user. |
-
-### Response
-
-#### Success
-**Status code:** 200 OK
-
-**Response Body:**
-```json
-{
-  "id": 3,
-  "name": "Bob Smith"
-}
-```
-
-#### Errors
-**Status code:** 500 Internal Server Error
-
-If an I/O error occurs.
 
 
