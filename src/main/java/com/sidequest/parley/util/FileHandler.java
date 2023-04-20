@@ -29,11 +29,13 @@ public class FileHandler {
 		this.FILENAME = fileName;
 		System.out.println("directory: " + directory);
 		System.out.println("fileName: " + fileName);
-		this.filePath = Paths.get(directory, fileName);
+		String fileSeparator = System.getProperty("file.separator");
+		this.filePath = Paths.get(directory + fileSeparator + fileName);
 	}
 
 	public Path getFilePath() {
-		return Paths.get(this.DIRECTORY, this.FILENAME);
+		String fileSeparator = System.getProperty("file.separator");
+		return Paths.get(this.DIRECTORY + fileSeparator + this.FILENAME);
 
 	}
 	

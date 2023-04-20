@@ -33,3 +33,225 @@ Here's a brief explanation of the main folders:
 - **resources**: Contains the project's resources like configuration files, properties files, and in your case, chat files.
 
 You can store the chat files within the resources folder in a directory called `chat-files`. This folder can contain individual text files representing chat rooms or conversations. Each file can be named uniquely, possibly using a combination of user IDs and/or chat room IDs to ensure uniqueness.
+
+## API Endpoints
+
+# ChatMessageController API Documentation
+
+## /chat/{id} [GET]
+
+Retrieves all chat messages for a specific chat room based on the provided `chatID`.
+
+### Request Parameters
+
+Parameter | Type | Required | Description
+--------- | ---- | -------- | -----------
+`id`      | int  | Yes      | The ID of the chat room to retrieve messages for.
+
+### Response
+
+Returns a JSON object containing an array of chat messages. Each chat message object contains the following fields:
+
+Field       | Type   | Description
+----------  | ------ | -----------
+`sender`    | Object | Contains the ID and name of the user who sent the message.
+`timestamp` | Object | Contains the full date and time the message was sent.
+`id`        | int    | The unique ID of the chat message.
+`content`   | String | The content of the chat message.
+
+### Example Request
+
+```
+GET /chat/1
+```
+
+### Example Response
+
+```json
+{
+  "messages": [
+    {
+      "sender": {
+        "id": 1,
+        "name": "John Doe"
+      },
+      "timestamp": {
+        "year": 2022,
+        "monthValue": 1,
+        "dayOfMonth": 1,
+        "hour": 0,
+        "minute": 0,
+        "second": 0,
+        "nano": 0,
+        "month": "JANUARY",
+        "dayOfWeek": "SATURDAY",
+        "dayOfYear": 1,
+        "chronology": {
+          "calendarType": "iso8601",
+          "id": "ISO"
+        }
+      },
+      "id": 1,
+      "content": "Hello world!"
+    }
+  ]
+}
+```
+
+## /chat [POST]
+
+Creates a new chat message for the specified chat room.
+
+### Request Body
+
+The request body must be a JSON object containing the following fields:
+
+Field      | Type | Required | Description
+---------  | ---- | -------- | -----------
+`chatId`   | int  | Yes      | The ID of the chat room to create the message in.
+`senderId` | int  | Yes      | The ID of the user who sent the message.
+`message`  | int  | Yes      | The content of the chat message.
+
+### Response
+
+Returns a JSON object containing the details of the newly created chat message.
+
+Field       | Type   | Description
+----------  | ------ | -----------
+`sender`    | Object | Contains the ID and name of the user who sent the message.
+`timestamp` | Object | Contains the full date and time the message was sent.
+`id`        | int    | The unique ID of the chat message.
+`content`   | String | The content of the chat message.
+
+### Example Request
+
+```
+POST /chat
+Content-Type: application/json
+
+{
+  "chatId": 1,
+  "senderId": 1,
+  "message": "Hello world!"
+}
+```
+
+### Example Response
+
+```json
+{
+  "sender": {
+    "id": 1,
+    "name": "John Doe"
+  },
+  "timestamp": {
+    "year": 2022,
+    "monthValue": 1,
+    "dayOfMonth": 1,
+    "hour": 0,
+    "minute": 0,
+    "second": 0,
+    "nano": 0,
+    "month": "JANUARY",
+    "dayOfWeek": "SATURDAY",
+    "dayOfYear": 1,
+    "chronology": {
+      "calendarType":
+
+# UserController API Documentation
+
+## Retrieve all users
+
+Endpoint: `GET /users`
+
+Retrieves a list of all users in JSON format.
+
+### Response
+
+#### Success
+**Status code:** 200 OK
+
+**Response Body:**
+```json
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "John Doe"
+    },
+    {
+      "id": 2,
+      "name": "Jane Doe"
+    }
+  ]
+}
+```
+
+#### Errors
+**Status code:** 404 Not Found
+
+If the file is not found or an I/O error occurs.
+
+## Retrieve a user by ID
+
+Endpoint: `GET /users/{id}`
+
+Retrieves a user by their ID.
+
+### Request Parameters
+
+| Parameter | Type   | Description         |
+| --------- | ------ | ------------------- |
+| id        | integer | The ID of the user to retrieve. |
+
+### Response
+
+#### Success
+**Status code:** 200 OK
+
+**Response Body:**
+```json
+{
+  "id": 1,
+  "name": "John Doe"
+}
+```
+
+#### Errors
+**Status code:** 404 Not Found
+
+If the user with the specified ID is not found.
+
+## Create a new user
+
+Endpoint: `POST /users`
+
+Creates a new user using the provided input data.
+
+### Request Body
+
+The request body is a JSON object containing the following required field:
+
+| Field  | Type   | Description        |
+| ------ | ------ | ------------------ |
+| name | string | The name of the new user. |
+
+### Response
+
+#### Success
+**Status code:** 200 OK
+
+**Response Body:**
+```json
+{
+  "id": 3,
+  "name": "Bob Smith"
+}
+```
+
+#### Errors
+**Status code:** 500 Internal Server Error
+
+If an I/O error occurs.
+
+
