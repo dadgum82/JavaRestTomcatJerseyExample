@@ -4,6 +4,7 @@ public class ChatMessageInput {
     private int senderId;
     private int chatId;
     private String message;
+    private String name;
 
     public ChatMessageInput() {}
 

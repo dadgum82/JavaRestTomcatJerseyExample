@@ -3,6 +3,7 @@ package com.sidequest.parley.model;
 import java.time.LocalDateTime;
 
 public class ChatMessage {
+	private String name;
     private int id;
     private String content;
     private LocalDateTime timestamp;
@@ -14,8 +15,25 @@ public class ChatMessage {
         this.timestamp = timestamp;
         this.sender = sender;
     }
-
-    public int getId() {
+    
+    //TODO this isn't 100% correct we should really be using constructor chaining but I can't remember JFR
+    public ChatMessage(int id, LocalDateTime timestamp, User sender, String content, String name) {
+        this.name = name;
+        this.id = id;
+        this.content = content;
+        this.timestamp = timestamp;
+        this.sender = sender;
+    }
+    
+    public String getName() {
+        return name;
+    }
+    
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+	public int getId() {
         return id;
     }
 

@@ -48,7 +48,13 @@ public class UserService {
     	
     }*/
     
-    private void initalizeUsers() throws FileNotFoundException, IOException {
+    public UserService(FileHandler fileHandler) {
+    	this.USERS_DIRECTORY = Config.getProperty("directory.users");
+    	this.USERS_FILE = Config.getProperty("file.users");
+		this.fileHandler = fileHandler;
+	}
+
+	private void initalizeUsers() throws FileNotFoundException, IOException {
     	int counter = 0;
     	boolean checkFile = this.fileHandler.fileExists();
     	if(checkFile) {
@@ -101,6 +107,8 @@ public class UserService {
     public User createUser(String name) throws IOException {
         int userCount = this.USERS_COUNT;
 		userCount ++; //new user increment count
+		System.out.println("User Count: " + name);
+		System.out.println("Name: " + userCount);
 		User user = new User(userCount, name);
 		this.users.add(user);
 		fileHandler.appendMessageToFile(user.toArray());
