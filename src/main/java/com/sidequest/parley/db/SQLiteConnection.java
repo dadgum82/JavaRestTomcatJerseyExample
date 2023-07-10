@@ -4,13 +4,15 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import com.sidequest.parley.util.Config;
+
 public class SQLiteConnection {
-    
-    private static final String DB_URL = "jdbc:sqlite:path/to/parley.db";
+    private final String DB_URL;
     
     private Connection connection;
     
     public SQLiteConnection() {
+    	this.DB_URL = Config.getProperty("db.url");
         connect();
     }
     

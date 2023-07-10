@@ -24,29 +24,6 @@ public class UserService {
         fileHandler = new FileHandler(USERS_DIRECTORY, USERS_FILE);
         this.initalizeUsers();
     }
-    /*
-    private void initalizeUsers() {
-    	int counter = 0;
-    	boolean checkFile = this.fileHandler.fileExists();
-    	if(checkFile) {
-    	users = new ArrayList<>();
-    	List<String> usersText = fileHandler.readFile();
-    	for(String line : usersText) {
-    		if(line.length() > 0 && line.contains(",")) {
-    			 
-    			int id = Integer.parseInt(line.split(",")[0]);
-    			String name = line.split(",")[1];
-    			User u = new User(id, name);
-    			users.add(u);
-    			counter++;
-    		}
-    	}
-    	} else {
-    		fileHandler.createFile();
-    	}
-    	this.USERS_COUNT = counter;
-    	
-    }*/
     
     public UserService(FileHandler fileHandler) {
     	this.USERS_DIRECTORY = Config.getProperty("directory.users");
