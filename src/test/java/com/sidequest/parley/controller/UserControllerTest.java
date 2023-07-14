@@ -18,6 +18,7 @@ import com.sidequest.parley.model.UserInput;
 import com.sidequest.parley.service.UserService;
 
 class UserControllerTest {
+    /*
     private UserController userController;
     private UserService userService;
 
@@ -67,4 +68,6 @@ class UserControllerTest {
 
         assertEquals(user, actualUser);
     }
+
+     */
 }

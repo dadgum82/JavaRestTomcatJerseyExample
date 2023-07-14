@@ -2,11 +2,13 @@ package com.sidequest.parley.service;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.sidequest.parley.dao.DbChatMessageDaoImpl;
 import com.sidequest.parley.model.ChatMessage;
 import com.sidequest.parley.model.ChatMessageInput;
 import com.sidequest.parley.model.User;
@@ -14,113 +16,70 @@ import com.sidequest.parley.util.Config;
 import com.sidequest.parley.util.FileHandler;
 
 public class ChatMessageService {
-	private FileHandler fileHandler;
-	private String CHAT_DIRECTORY;
-	private String CHAT_FILE;
-	private int CHAT_MESSAGE_COUNT;
-	private List<ChatMessage> chatMessages;
+    private int CHAT_MESSAGE_COUNT;
+    private List<ChatMessage> chatMessages;
 
-	public ChatMessageService() throws IOException {
-		this.CHAT_DIRECTORY = Config.getProperty("directory.chatFiles");
-		this.CHAT_FILE = null;
-		this.CHAT_MESSAGE_COUNT = 0;
-		this.fileHandler = new FileHandler(CHAT_DIRECTORY);
-	}
+    DbChatMessageDaoImpl dao;
 
-	public ChatMessageService(FileHandler fileHandler) {
-		this.fileHandler = fileHandler;
-	}
+    public ChatMessageService() throws IOException {
+        this("prod"); // default to prod. This is constructor chaining.
+    }
 
-	public ChatMessageService(int chatID) throws IOException {
-		this.CHAT_DIRECTORY = Config.getProperty("directory.chatFiles");
-		this.CHAT_FILE = "chat-" + chatID + ".txt";
-		this.fileHandler = new FileHandler(CHAT_DIRECTORY, CHAT_FILE);
-		this.initalizeChat();
-	}
+    public ChatMessageService(String dbEnv) throws IOException {
+        this(dbEnv, 0);
+    }
 
-	public ChatMessage createChatMessage(ChatMessageInput chatMessageInput) throws IOException {
-		int messageID = this.CHAT_MESSAGE_COUNT;
-		UserService us = new UserService();
-		System.out.println("chatMessageInput.getSenderId(): " + chatMessageInput.getSenderId());
-		User user = us.getUser(chatMessageInput.getSenderId());
-		System.out.println("The user name is: " + user.getName());
+    public ChatMessageService(int chatRoomId) throws IOException {
+        this("prod", chatRoomId);
+    }
 
-		String message = chatMessageInput.getMessage();
+    public ChatMessageService(String dbEnv, int chatRoomId) throws IOException {
+        this.CHAT_MESSAGE_COUNT = 0;
+        this.chatMessages = new ArrayList<>();
+        dao = new DbChatMessageDaoImpl(dbEnv);
+        this.initalizeChat(chatRoomId);
+    }
 
-		messageID++;
-		LocalDateTime currentTime = LocalDateTime.now();
-		ChatMessage cm = new ChatMessage(messageID, currentTime, user, message);
-		this.chatMessages.add(cm);
-		fileHandler.appendMessageToFile(cm.toArray());
+    private void initalizeChat(int chatRoomId) throws FileNotFoundException, IOException {
+        chatMessages.addAll(dao.getAllChatMessages(chatRoomId));
+        this.CHAT_MESSAGE_COUNT = chatMessages.size();
+           }
 
-		this.CHAT_MESSAGE_COUNT = messageID;
-		return cm;
-	}
+    public ChatMessage createChatMessage(ChatMessageInput chatMessageInput) throws IOException, SQLException {
+        int messageID = this.CHAT_MESSAGE_COUNT;
+        messageID++;
+
+        UserService us = new UserService();
+        System.out.println("chatMessageInput.getSenderId(): " + chatMessageInput.getUserId());
+        User user = us.getUser(chatMessageInput.getUserId());
+        System.out.println("The user name is: " + user.getName());
+
+        String content = chatMessageInput.getContent();
+
+        LocalDateTime currentTime = LocalDateTime.now();
+        //int id, int chatRoomId, LocalDateTime timestamp, User sender, String content
+        ChatMessage cm = new ChatMessage(messageID, chatMessageInput.getChatRoomId(), currentTime, user, content);
+        System.out.println("ChatMessageService.createChatMessage: cm.content" + cm.getContent());
+        this.chatMessages.add(cm);
+        dao.createChatMessage(cm);
+
+        this.CHAT_MESSAGE_COUNT = messageID;
+        return cm;
+    }
+
+    public List<ChatMessage> getChatMessages() {
+        return this.chatMessages;
+    }
+
+    public List<ChatMessage> getChatMessages(int chatID) {
+        List<ChatMessage> result = new ArrayList<>();
+        for (ChatMessage cm : this.chatMessages) {
+            if (cm.getId() == chatID) {
+                result.add(cm);
+            }
+        }
+        return result;
+    }
 
 
-	private boolean createFile() {
-		return fileHandler.createFile();
-	}
-
-	public List<Integer> getChatMessageIds() throws IOException {
-		List<Integer> chatIds = new ArrayList<>();
-		List<String> fileNames = this.fileHandler.getDirectoryContents();
-		for(String fileName : fileNames) {
-			String id = "";
-			if(fileName.contains("chat-")) {
-				id = fileName.replace("chat-","");
-				id = id.replace(".txt","");
-				chatIds.add(Integer.valueOf(id));
-			}
-		}
-
-		return chatIds;
-
-	}
-
-	public List<ChatMessage> getChatMessages() {
-		return this.chatMessages;
-	}
-
-	public List<ChatMessage> getChatMessages(int chatID) {
-		List<ChatMessage> result = new ArrayList<>();
-		for(ChatMessage cm : this.chatMessages) {
-			if(cm.getId() == chatID) {
-				result.add(cm);
-			}
-		}
-		return result;
-	}
-
-	private void initalizeChat() throws FileNotFoundException, IOException {
-		int counter = 0;
-		boolean checkFile = this.fileHandler.fileExists();
-		if (!checkFile) {
-			if (!this.createFile()) {
-				throw new FileNotFoundException("Could not create the file: " + fileHandler.getFilePath());
-			}
-		}
-
-		chatMessages = new ArrayList<>();
-		List<String[]> chatText = fileHandler.readCSVFile();
-		for (String[] line : chatText) {
-			if (line.length > 0) {
-				// System.out.println(line);
-				int id = Integer.parseInt(line[0]);
-				String strDateTime = line[1];
-				int userID = Integer.valueOf(line[2]);
-				String content = line[3];
-
-				UserService us = new UserService();
-				User userSender = us.getUser(userID);
-				LocalDateTime ldt = LocalDateTime.parse(strDateTime, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-				ChatMessage cm = new ChatMessage(id, ldt, userSender, content);
-				chatMessages.add(cm);
-				counter++;
-			}
-		}
-
-		this.CHAT_MESSAGE_COUNT = counter;
-
-	}
 }

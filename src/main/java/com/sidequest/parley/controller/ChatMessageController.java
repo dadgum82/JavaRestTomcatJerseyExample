@@ -2,6 +2,7 @@ package com.sidequest.parley.controller;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.sql.SQLException;
 import java.time.ZoneOffset;
 
 import javax.json.Json;
@@ -31,6 +32,8 @@ public class ChatMessageController {
 	 * @return A JSON-formatted integers containing an array of chat ids.
 	 * @throws IOException If an I/O error occurs.
 	 */
+
+	/*
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getChatIds() throws IOException {
@@ -53,7 +56,7 @@ public class ChatMessageController {
 		Json.createWriter(writer).write(root);
 		return writer.toString();
 	}
-	
+	*/
 	
 	/**
 	 * Retrieves a list of chat messages for a given chat ID in JSON format.
@@ -71,9 +74,9 @@ public class ChatMessageController {
 		for (ChatMessage cm : cms.getChatMessages()) {
 			JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
 			JsonObjectBuilder userBuilder = Json.createObjectBuilder();
-			userBuilder.add("id", cm.getSender().getId());
-			userBuilder.add("name", cm.getSender().getName());
-			objectBuilder.add("sender", userBuilder);
+			userBuilder.add("id", cm.getUser().getId());
+			userBuilder.add("name", cm.getUser().getName());
+			objectBuilder.add("user", userBuilder);
 
 			JsonObjectBuilder timestampBuilder = Json.createObjectBuilder();
 			timestampBuilder.add("year", cm.getTimestamp().getYear());
@@ -91,7 +94,7 @@ public class ChatMessageController {
 			timestampBuilder.add("localTime", cm.getTimestamp().toLocalTime().toString()); //all our users are in the same time zone because we make up this reality.
 			objectBuilder.add("timestamp", timestampBuilder);
 
-			objectBuilder.add("id", cm.getId());
+			objectBuilder.add("chatMessageId", cm.getId());
 			objectBuilder.add("content", cm.getContent());
 			//objectBuilder.add("name", cm.getName());
 			arrayBuilder.add(objectBuilder.build());
@@ -115,10 +118,10 @@ public class ChatMessageController {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public ChatMessage createChatMessage(ChatMessageInput chatMessageInput) throws IOException {
-		int chatID = chatMessageInput.getChatId();
+	public ChatMessage createChatMessage(ChatMessageInput chatMessageInput) throws IOException, SQLException {
+		int chatRoomId = chatMessageInput.getChatRoomId();
 
-		ChatMessageService chatMessageService = new ChatMessageService(chatID);
+		ChatMessageService chatMessageService = new ChatMessageService(chatRoomId);
 		return chatMessageService.createChatMessage(chatMessageInput);
 	}
 }

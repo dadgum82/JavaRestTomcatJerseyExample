@@ -1,40 +1,39 @@
 package com.sidequest.parley.model;
 
 public class ChatMessageInput {
-    private int senderId;
-    private int chatId;
-    private String message;
-    private String name;
+    private int userId;
+    private int chatRoomId;
+    private String content;
 
     public ChatMessageInput() {}
 
-    public ChatMessageInput(int chatId, int senderId,  String message) {
-        this.senderId = senderId;
-        this.chatId = chatId;
-        this.message = message;
+    public ChatMessageInput(int chatRoomId, int userId,  String content) {
+        this.userId = userId;
+        this.chatRoomId = chatRoomId;
+        this.content = content;
     }
 
-    public int getSenderId() {
-        return senderId;
+    public int getUserId() {
+        return userId;
     }
     
-    public void setSenderId(int senderId) {
-        this.senderId = senderId;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
-    public int getChatId() {
-        return chatId;
+    public int getChatRoomId() {
+        return chatRoomId;
     }
 
-    public void setChatId(int chatId) {
-        this.chatId = chatId;
+    public void setChatRoomId(int chatRoomId) {
+        this.chatRoomId = chatRoomId;
     }
 
-    public String getMessage() {
-        return message;
+    public String getContent() {
+        return content;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setContent(String content) {
+        this.content = content;
     }
 }

@@ -3,93 +3,83 @@ package com.sidequest.parley.service;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import com.sidequest.parley.dao.DbUserDaoImpl;
 import com.sidequest.parley.model.User;
 import com.sidequest.parley.util.Config;
 import com.sidequest.parley.util.FileHandler;
 
 
-
 public class UserService {
-	private int USERS_COUNT;
-	private final String USERS_DIRECTORY;
-    private final String USERS_FILE;
-    private final FileHandler fileHandler;
+    private int USERS_COUNT;
     private List<User> users;
+    DbUserDaoImpl dao;
 
     public UserService() throws FileNotFoundException, IOException {
-    	this.USERS_DIRECTORY = Config.getProperty("directory.users");
-    	this.USERS_FILE = Config.getProperty("file.users");
-        fileHandler = new FileHandler(USERS_DIRECTORY, USERS_FILE);
+        dao = new DbUserDaoImpl("prod");
+        users = new ArrayList<>();
         this.initalizeUsers();
     }
-    
-    public UserService(FileHandler fileHandler) {
-    	this.USERS_DIRECTORY = Config.getProperty("directory.users");
-    	this.USERS_FILE = Config.getProperty("file.users");
-		this.fileHandler = fileHandler;
-	}
 
-	private void initalizeUsers() throws FileNotFoundException, IOException {
-    	int counter = 0;
-    	boolean checkFile = this.fileHandler.fileExists();
-    	if(checkFile) {
-    	users = new ArrayList<>();
-    	//List<String> usersText = fileHandler.readFile();
-    	List<String[]> usersText = fileHandler.readCSVFile();
-    	for(String[] line : usersText) {
-    		if(line.length > 0) {
-    			 
-    			int id = Integer.parseInt(line[0]);
-    			String name = line[1];
-    			User u = new User(id, name);
-    			users.add(u);
-    			counter++;
-    		}
-    	}
-    	} else {
-    		fileHandler.createFile();
-    	}
-    	this.USERS_COUNT = counter;
-    	
+    private void initalizeUsers() throws FileNotFoundException, IOException {
+        this.users.addAll(dao.getAllUsers());
+        this.USERS_COUNT = this.users.size();
     }
 
     public List<User> getUsers() {
-            return this.users;
+        return this.users;
     }
-    
-	public User getUser(int userId) {
-		for(User u : this.users) {
-	        if(u.getId() == userId) {
-	            return u;
-	        }
-	    }
-	    return null;
-	}
-	
-	public User getUser(String name) {
-		for(User u : this.users) {
-	        if(u.getName().equalsIgnoreCase(name)) {
-	            return u;
-	        }
-	    }
-	    return null;
-	}
-	
+
+    public User getUser(int userId) {
+        for (User u : this.users) {
+            if (u.getId() == userId) {
+                return u;
+            }
+        }
+        return null;
+    }
+
+    public User getUser(String name) {
+        for (User u : this.users) {
+            if (u.getName().equalsIgnoreCase(name)) {
+                return u;
+            }
+        }
+        return null;
+    }
+
     public int getUserCount() {
         return USERS_COUNT;
-}
-    
+    }
+
     public User createUser(String name) throws IOException {
         int userCount = this.USERS_COUNT;
-		userCount ++; //new user increment count
-		System.out.println("User Count: " + name);
-		System.out.println("Name: " + userCount);
-		User user = new User(userCount, name);
-		this.users.add(user);
-		fileHandler.appendMessageToFile(user.toArray());
-		this.USERS_COUNT = userCount;
-		return user;
+        userCount++; //new user increment count
+        User user = new User(userCount, name);
+        try {
+            dao.createUser(user);
+            System.out.println("User created");
+            this.users.add(user);
+            this.USERS_COUNT = userCount;
+            return user;
+
+        } catch (Exception e) {
+            System.out.println("User not created");
+        }
+        return null;
+    }
+
+    public User updateUser(String name, int id) throws IOException {
+        User user = new User(id, name);
+        try {
+            dao.updateUser(user);
+            System.out.println("User updated");
+            return user;
+        } catch (Exception e) {
+            System.out.println("User not updated");
+        }
+        return null;
     }
 }

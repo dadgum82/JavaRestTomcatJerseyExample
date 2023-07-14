@@ -6,32 +6,71 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ChatRoom {
-    private int id;                 // Unique identifier for the chat room
-    private List<User> users;       // List of users in the chat room
-    private String name;            // Name of the chat room
-    private byte[] icon;            // Icon representing the chat room (image)
+    private int chatRoomId;                         // Unique identifier for the chat room
+    private List<Integer> userIds;          // List of users in the chat room
+    private String name;                    // Name of the chat room
+    private byte[] icon;                    // Icon representing the chat room (image)
+    private InputStream iconStream;         // Input stream for the chat room icon
+    private int moderatorId;                // ID of the user who is the moderator of the chat room
 
-    public ChatRoom(int id, String name, byte[] icon) {
-        this.id = id;
+    public ChatRoom(int chatRoomId, String name, byte[] icon) {
+        this.chatRoomId = chatRoomId;
         this.name = name;
         this.icon = icon;
-        this.users = new ArrayList<>();   // Initialize the list of users
+        this.userIds = new ArrayList<>();
+        this.iconStream = new ByteArrayInputStream(icon);
     }
 
-    public int getId() {
-        return id;
+    public ChatRoom(int chatRoomId, String name, int moderatorId) {
+        this.chatRoomId = chatRoomId;
+        this.name = name;
+        this.moderatorId = moderatorId;
+        this.userIds = new ArrayList<>();
     }
 
-    public List<User> getUsers() {
-        return users;
+    public ChatRoom(int chatRoomId, String name, int moderatorId, byte[] icon) {
+        this.chatRoomId = chatRoomId;
+        this.name = name;
+        this.icon = icon;
+        this.moderatorId = moderatorId;
+        this.userIds = new ArrayList<>();
+        if (icon != null){
+            this.iconStream = new ByteArrayInputStream(icon);
+        }
     }
 
-    public void addUser(User user) {
-        users.add(user);   // Add a user to the chat room
+    public ChatRoom(int chatRoomId, String name, int moderatorId, byte[] icon, List<Integer> userIds) {
+        this.chatRoomId = chatRoomId;
+        this.name = name;
+        this.icon = icon;
+        this.moderatorId = moderatorId;
+        this.userIds = new ArrayList<>(userIds);
+        if (icon != null){
+            this.iconStream = new ByteArrayInputStream(icon);
+        }
     }
 
-    public void removeUser(User user) {
-        users.remove(user);   // Remove a user from the chat room
+    public ChatRoom(int chatRoomId, String name, int moderatorId, List<Integer> userIds) {
+        this.chatRoomId = chatRoomId;
+        this.name = name;
+        this.moderatorId = moderatorId;
+        this.userIds = new ArrayList<>(userIds);
+    }
+
+    public int getChatRoomId() {
+        return chatRoomId;
+    }
+
+    public List<Integer> getUserIds() {
+        return userIds;
+    }
+
+    public void addUserId(int id) {
+        userIds.add(id);
+    }
+
+    public void removeUserId(int id) {
+        userIds.remove(id);
     }
 
     public String getName() {
@@ -44,9 +83,22 @@ public class ChatRoom {
 
     public void setIcon(byte[] icon) {
         this.icon = icon;
+        this.iconStream = new ByteArrayInputStream(icon);
     }
 
     public InputStream getIconStream() {
-        return new ByteArrayInputStream(icon);   // Convert the icon byte array to an InputStream
+        return iconStream;
+    }
+
+    public int getModeratorId() {
+        return moderatorId;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setModeratorId(int moderatorId) {
+        this.moderatorId = moderatorId;
     }
 }

@@ -3,38 +3,45 @@ package com.sidequest.parley.model;
 import java.time.LocalDateTime;
 
 public class ChatMessage {
-	private String name;
-    private int id;
+
+    private  int id;
+    private int chatRoomId;
     private String content;
     private LocalDateTime timestamp;
-    private User sender;
+    private User user;
 
-    public ChatMessage(int id, LocalDateTime timestamp, User sender, String content) {
+    public ChatMessage(int id, int chatRoomId, LocalDateTime timestamp, User user, String content) {
         this.id = id;
+        this.chatRoomId = chatRoomId;
         this.content = content;
         this.timestamp = timestamp;
-        this.sender = sender;
+        this.user = user;
     }
-    
-    //TODO this isn't 100% correct we should really be using constructor chaining but I can't remember JFR
-    public ChatMessage(int id, LocalDateTime timestamp, User sender, String content, String name) {
-        this.name = name;
-        this.id = id;
-        this.content = content;
-        this.timestamp = timestamp;
-        this.sender = sender;
+    public void setId(int id) {
+    	this.id = id;
     }
-    
-    public String getName() {
-        return name;
+
+    public void setChatRoomId(int chatRoomId) {
+    	this.chatRoomId = chatRoomId;
     }
-    
-    public void setName(String name) {
-        this.name = name;
+
+    public void setContent(String content) {
+    	this.content = content;
     }
-    
-	public int getId() {
+
+    public void setTimestamp(LocalDateTime timestamp) {
+    	this.timestamp = timestamp;
+    }
+
+    public void setSender(User user) {
+    	this.user = user;
+    }
+
+    public int getId() {
         return id;
+    }
+	public int getChatRoomId() {
+        return chatRoomId;
     }
 
     public String getContent() {
@@ -45,21 +52,21 @@ public class ChatMessage {
         return timestamp;
     }
 
-    public User getSender() {
-        return sender;
+    public User getUser() {
+        return user;
     }
     
     public String[] toArray() {
-    	String[] fields = {String.valueOf(this.id), this.timestamp.toString(),String.valueOf(this.sender.getId()),this.content};
+    	String[] fields = {String.valueOf(this.chatRoomId), this.timestamp.toString(),String.valueOf(this.user.getId()),this.content};
 		return fields;
     }
-    
+
     public String stringify() {
-        String idString = String.valueOf(this.id);
-        String senderName = this.sender.getName();
+        String idString = String.valueOf(this.chatRoomId);
+        String userName = this.user.getName();
         String timestampString = this.timestamp.toString();
         String escapedContent = this.content.replace("\"", "\"\"");
-        String[] fields = {idString, timestampString, senderName, escapedContent};
+        String[] fields = {idString, timestampString, userName, escapedContent};
         return String.join("\",\"", fields);
     }
 

@@ -1,17 +1,16 @@
-package com.sidequest.parley.db;
+package com.sidequest.parley.dao;
 
-import com.sidequest.parley.db.SQLiteConnection;
 import com.sidequest.parley.model.User;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserDAO {
+public class UserDAO_old {
 
 	private SQLiteConnection dbConnection;
 
-	public UserDAO() {
+	public UserDAO_old() {
 		dbConnection = new SQLiteConnection();
 	}
 
