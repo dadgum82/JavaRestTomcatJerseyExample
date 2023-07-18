@@ -127,13 +127,10 @@ public class ChatRoomService {
         return false;
     }
 
-    /**
-     * Update a chat room by id
-     *
+    /** Update a chat room by id and name
      * @param chatId
      * @param name
-     * @param icon
-     * @return true if chat room was updated, false if chat room was not found
+     * @return ChatRoom if chat room was updated
      */
     public ChatRoom updateChatRoom(int chatId, String name, byte[] icon) {
         ChatRoom chatRoom = this.getChatRoom(chatId);

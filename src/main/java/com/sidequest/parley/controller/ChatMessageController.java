@@ -26,38 +26,7 @@ import com.sidequest.parley.service.ChatMessageService;
  */
 @Path("/chats")
 public class ChatMessageController {
-	/**
-	 * Retrieves a list of chat IDs in JSON format.
-	 *
-	 * @return A JSON-formatted integers containing an array of chat ids.
-	 * @throws IOException If an I/O error occurs.
-	 */
 
-	/*
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	public String getChatIds() throws IOException {
-		ChatMessageService cms = new ChatMessageService();
-		JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-		for (Integer id : cms.getChatMessageIds()) {
-			JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-//			JsonObjectBuilder idBuilder = Json.createObjectBuilder();
-//			userBuilder.add("id", id);
-//			userBuilder.add("name", cm.getSender().getName());
-//			objectBuilder.add("sender", userBuilder);
-
-			objectBuilder.add("id", id);
-			arrayBuilder.add(objectBuilder.build());
-		}
-		JsonObjectBuilder rootBuilder = Json.createObjectBuilder();
-		rootBuilder.add("chats", arrayBuilder.build());
-		JsonObject root = rootBuilder.build();
-		StringWriter writer = new StringWriter();
-		Json.createWriter(writer).write(root);
-		return writer.toString();
-	}
-	*/
-	
 	/**
 	 * Retrieves a list of chat messages for a given chat ID in JSON format.
 	 *

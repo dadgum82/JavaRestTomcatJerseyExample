@@ -7,9 +7,9 @@ com.sidequest.parley.util.Config has an environmental variable that points to th
 
 Maven most likely does this correct but I didn't want to figure it out.
 
-Variable           | Value
------------------- | ----------------------
-PARLEY_CONFIG_FILE | < ABSOLUTE PATH >\\config.properties
+| Variable           | Value                                |
+|--------------------|--------------------------------------|
+| PARLEY_CONFIG_FILE | < ABSOLUTE PATH >\\config.properties |
 
 ## Folder Structure
 
@@ -88,9 +88,9 @@ Retrieves a user by their ID.
 
 #### Request Parameters
 
-Parameter | Type   | Description
---------- | ------ | -----------
-id        | int    | The ID of the user to retrieve.
+| Parameter | Type | Description                     |
+|-----------|------|---------------------------------|
+| id        | int  | The ID of the user to retrieve. |
 
 #### Success Response
 
@@ -120,9 +120,9 @@ Creates a new user using the provided input data.
 
 The request body must be a JSON object containing the following fields:
 
-Field | Type   | Required | Description
------ | ------ | -------- | -----------
-name  | string | Yes      | The name of the new user.
+| Field | Type   | Required | Description               |
+|-------|--------|----------|---------------------------|
+| name  | string | Yes      | The name of the new user. |
 
 #### Success Response
 
@@ -157,22 +157,22 @@ Creates a new chat message for the specified chat room.
 
 The request body must be a JSON object containing the following fields:
 
-| Field      | Type | Required | Description                          |
-| ---------- | ---- | -------- | ------------------------------------|
+| Field      | Type | Required | Description                                       |
+|------------|------|----------|---------------------------------------------------|
 | `chatId`   | int  | Yes      | The ID of the chat room to create the message in. |
-| `senderId` | int  | Yes      | The ID of the user who sent the message.         |
-| `message`  | int  | Yes      | The content of the chat message.                |
+| `senderId` | int  | Yes      | The ID of the user who sent the message.          |
+| `message`  | int  | Yes      | The content of the chat message.                  |
 
 #### Response
 
 Returns a JSON object containing the details of the newly created chat message.
 
-| Field       | Type   | Description                          |
-| ------------| ------ | -------------------------------------|
+| Field       | Type   | Description                                                |
+|-------------|--------|------------------------------------------------------------|
 | `sender`    | Object | Contains the ID and name of the user who sent the message. |
-| `timestamp` | Object | Contains the full date and time the message was sent.        |
-| `id`        | int    | The unique ID of the chat message.                           |
-| `content`   | String | The content of the chat message.                             |
+| `timestamp` | Object | Contains the full date and time the message was sent.      |
+| `id`        | int    | The unique ID of the chat message.                         |
+| `content`   | String | The content of the chat message.                           |
 
 #### Example Request
 
@@ -191,28 +191,28 @@ Content-Type: application/json
 
 ```json
 {
-    "id": 3,
-    "content": "This is another message",
-    "timestamp": {
-        "year": 2023,
-        "monthValue": 4,
-        "dayOfMonth": 20,
-        "hour": 8,
-        "minute": 52,
-        "second": 49,
-        "nano": 538765400,
-        "month": "APRIL",
-        "dayOfWeek": "THURSDAY",
-        "dayOfYear": 110,
-        "chronology": {
-            "id": "ISO",
-            "calendarType": "iso8601"
-        }
-    },
-    "sender": {
-        "id": 1,
-        "name": "John Doe"
+  "content": "This is another message",
+  "id": 3,
+  "sender": {
+    "id": 1,
+    "name": "John Doe"
+  },
+  "timestamp": {
+    "year": 2023,
+    "monthValue": 4,
+    "dayOfMonth": 20,
+    "hour": 8,
+    "minute": 52,
+    "second": 49,
+    "nano": 538765400,
+    "month": "APRIL",
+    "dayOfWeek": "THURSDAY",
+    "dayOfYear": 110,
+    "chronology": {
+      "id": "ISO",
+      "calendarType": "iso8601"
     }
+  }
 }
 ```
 

@@ -3,7 +3,7 @@ package com.sidequest.parley.dao;
 /** This class is used to create the database schema for the ChatRoom table.
  * A chat room is a group of users who can chat with each other.
  * It has the following fields:
- *
+ * <p>
  * id: the id of the chat room
  * name: the name of the chat room
  * moderatorId: the id of the user who is the moderator of the chat room
