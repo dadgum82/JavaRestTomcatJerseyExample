@@ -2,25 +2,15 @@ package com.sidequest.parley.dao;
 
 import com.sidequest.parley.model.ChatRoomUsers;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.List;
 
 public class DbChatRoomUsersImpl implements ChatRoomUsersDao {
-    private SQLiteConnection dbConnection;
-    private Connection connection;
-    Statement statement;
+   // private SQLiteConnection dbConnection;
+    private String dbEnv;
 
     public DbChatRoomUsersImpl(String dbEnv) {
-        dbConnection = new SQLiteConnection(dbEnv);
-        connection = dbConnection.getConnection();
-        try {
-            statement = connection.createStatement();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        this.dbEnv = dbEnv;
     }
 
     @Override
@@ -48,10 +38,16 @@ public class DbChatRoomUsersImpl implements ChatRoomUsersDao {
      */
     @Override
     public void dropChatRoomUsersTable() {
-        try {
-            statement.execute(SchemaChatRoomUsersSql.DROP_TABLE);
+        SQLiteConnection dbConnection = new SQLiteConnection(dbEnv);
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SchemaChatRoomUsersSql.DROP_TABLE);
+        ){
+            //statement.execute(SchemaChatRoomUsersSql.DROP_TABLE);
+            statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            dbConnection.closeConnection();
         }
     }
 
@@ -63,12 +59,41 @@ public class DbChatRoomUsersImpl implements ChatRoomUsersDao {
      */
     @Override
     public void createChatRoomUsersTable() {
-        try {
+        SQLiteConnection dbConnection = new SQLiteConnection(dbEnv);
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SchemaChatRoomUsersSql.CREATE_TABLE);
+        ){
             System.out.println("CREATE_TABLE: " + SchemaChatRoomUsersSql.CREATE_TABLE);
-            statement.execute(SchemaChatRoomUsersSql.CREATE_TABLE);
+           // statement.execute(SchemaChatRoomUsersSql.CREATE_TABLE);
+            statement.executeUpdate();
             System.out.println("CREATE_TABLE is done...");
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            dbConnection.closeConnection();
         }
+    }
+
+    public boolean isUserInChatRoom(int userId, int chatRoomId) {
+        SQLiteConnection dbConnection = new SQLiteConnection(dbEnv);
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SchemaChatRoomUsersSql.SELECT_USER_IN_CHAT_ROOM);
+        ){
+            statement.setInt(1, userId);
+            statement.setInt(2, chatRoomId);
+            System.out.println("SELECT_USER_IN_CHAT_ROOM: " + SchemaChatRoomUsersSql.SELECT_USER_IN_CHAT_ROOM);
+            System.out.println("userId: " + userId + " chatRoomId: " + chatRoomId);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                System.out.println("+++user is in chat room");
+                return true;
+            }
+            return false;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            dbConnection.closeConnection();
+        }
+        return false;
     }
 }

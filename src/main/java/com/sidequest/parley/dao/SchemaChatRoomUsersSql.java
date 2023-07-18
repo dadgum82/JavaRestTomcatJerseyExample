@@ -10,18 +10,13 @@ package com.sidequest.parley.dao;
  * This table is also used to determine which chat rooms a user is in.
  */
 public class SchemaChatRoomUsersSql {
-    public static final String INSERT_CHAT_ROOM_USERS = "INSERT INTO chat_room_users (chatRoomId, userId) VALUES (?, ?)";
-
     private SchemaChatRoomUsersSql() {
     }
+    public static final String INSERT_CHAT_ROOM_USERS = "INSERT INTO chat_room_users (chatRoomId, userId) VALUES (?, ?)";
+    public static final String SELECT_USER_IN_CHAT_ROOM = "SELECT * FROM chat_room_users WHERE userId = ? AND chatRoomId = ?";
 
     public static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS chat_room_users (userId INTEGER, chatRoomId INTEGER, FOREIGN KEY (userId) REFERENCES user(userId), FOREIGN KEY (chatRoomId) REFERENCES chat_room(chatRoomId))";
     public static final String DROP_TABLE = "DROP TABLE IF EXISTS chat_room_users";
-
-    public static final String INSERT_CHAT_ROOM_USER = "INSERT INTO chat_room_users (userId, chatRoomId) VALUES (?, ?)";
-public static final String SELECT_CHAT_ROOM_USERS_BY_USER_ID = "SELECT * FROM chat_room_users WHERE userId = ?";
     public static final String SELECT_CHAT_ROOM_USERS_BY_CHAT_ROOM_ID = "SELECT * FROM chat_room_users WHERE chatRoomId = ?";
-    public static final String DELETE_CHAT_ROOM_USER = "DELETE FROM chat_room_users WHERE userId = ? AND chatRoomId = ?";
-    public static final String SELECT_ALL_CHAT_ROOM_USERS = "SELECT * FROM chat_room_users";
 
 }

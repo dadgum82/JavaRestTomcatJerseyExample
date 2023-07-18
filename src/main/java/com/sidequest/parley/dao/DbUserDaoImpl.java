@@ -10,24 +10,16 @@ import java.util.List;
  * This class is used to access the User table in the database.
  */
 public class DbUserDaoImpl implements UserDao {
-    private SQLiteConnection dbConnection;
-    private Connection connection;
-    Statement statement;
-
+    //private SQLiteConnection dbConnection;
+private String dbEnv;
     /**
      * Constructor for DbUserDaoImpl.
      *
      * @param dbEnv The database environment to use. Valid values are "prod" and "test".
      */
     public DbUserDaoImpl(String dbEnv) {
-
-        dbConnection = new SQLiteConnection(dbEnv);
-        connection = dbConnection.getConnection();
-        try {
-            statement = connection.createStatement();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        this.dbEnv = dbEnv;
+       // dbConnection = new SQLiteConnection(dbEnv);
     }
 
     /**
@@ -38,7 +30,10 @@ public class DbUserDaoImpl implements UserDao {
     @Override
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
-        try (ResultSet resultSet = statement.executeQuery(SchemaUserSql.SELECT_ALL_USERS)) {
+        SQLiteConnection dbConnection = new SQLiteConnection(dbEnv);
+        try (Connection connection = dbConnection.getConnection();
+                Statement statement = connection.createStatement();
+                ResultSet resultSet = statement.executeQuery(SchemaUserSql.SELECT_ALL_USERS)) {
 
             while (resultSet.next()) {
                 int id = resultSet.getInt("userId");
@@ -54,6 +49,8 @@ public class DbUserDaoImpl implements UserDao {
         } catch (SQLException e) {
             e.printStackTrace();
             // Handle database access error
+        } finally {
+            dbConnection.closeConnection();
         }
 
         return users;
@@ -68,8 +65,9 @@ public class DbUserDaoImpl implements UserDao {
     @Override
     public User getUserById(int id) {
         User user = null;
-
-        try (PreparedStatement statement = connection.prepareStatement(SchemaUserSql.SELECT_USER_BY_ID)) {
+        SQLiteConnection dbConnection = new SQLiteConnection(dbEnv);
+        try (Connection connection = dbConnection.getConnection();
+                PreparedStatement statement = connection.prepareStatement(SchemaUserSql.SELECT_USER_BY_ID)) {
             statement.setInt(1, id);
             ResultSet resultSet = statement.executeQuery();
 
@@ -82,6 +80,8 @@ public class DbUserDaoImpl implements UserDao {
         } catch (SQLException e) {
             e.printStackTrace();
             // Handle database access error
+        } finally {
+            dbConnection.closeConnection();
         }
 
         return user;
@@ -96,7 +96,9 @@ public class DbUserDaoImpl implements UserDao {
     @Override
     public User getUserByName(String name) {
         User user = null;
-        try (PreparedStatement statement = connection.prepareStatement(SchemaUserSql.SELECT_USER_BY_NAME)) {
+        SQLiteConnection dbConnection = new SQLiteConnection(dbEnv);
+        try (Connection connection = dbConnection.getConnection();
+                PreparedStatement statement = connection.prepareStatement(SchemaUserSql.SELECT_USER_BY_NAME)) {
             statement.setString(1, name);
             ResultSet resultSet = statement.executeQuery();
 
@@ -109,6 +111,8 @@ public class DbUserDaoImpl implements UserDao {
         } catch (SQLException e) {
             e.printStackTrace();
             // Handle database access error
+        } finally {
+            dbConnection.closeConnection();
         }
         return user;
     }
@@ -120,7 +124,9 @@ public class DbUserDaoImpl implements UserDao {
      */
     @Override
     public void createUser(User user) {
-        try (PreparedStatement statement = connection
+        SQLiteConnection dbConnection = new SQLiteConnection(dbEnv);
+        try (Connection connection = dbConnection.getConnection();
+                PreparedStatement statement = connection
                 .prepareStatement(SchemaUserSql.INSERT_USER)) {
             statement.setInt(1, user.getId());
             statement.setString(2, user.getName());
@@ -128,6 +134,8 @@ public class DbUserDaoImpl implements UserDao {
         } catch (SQLException e) {
             e.printStackTrace();
             // Handle database access error
+        } finally {
+            dbConnection.closeConnection();
         }
     }
 
@@ -138,7 +146,9 @@ public class DbUserDaoImpl implements UserDao {
      */
     @Override
     public void updateUser(User user) {
-        try (PreparedStatement statement = connection.prepareStatement(SchemaUserSql.UPDATE_USER)) {
+        SQLiteConnection dbConnection = new SQLiteConnection(dbEnv);
+        try (Connection connection = dbConnection.getConnection();
+                PreparedStatement statement = connection.prepareStatement(SchemaUserSql.UPDATE_USER)) {
 
             statement.setString(1, user.getName());
             statement.setInt(2, user.getId());
@@ -148,6 +158,8 @@ public class DbUserDaoImpl implements UserDao {
         } catch (SQLException e) {
             e.printStackTrace();
             // Handle database access error
+        } finally {
+            dbConnection.closeConnection();
         }
 
     }
@@ -159,7 +171,9 @@ public class DbUserDaoImpl implements UserDao {
      */
     @Override
     public void deleteUser(User user) {
-        try (PreparedStatement statement = connection.prepareStatement(SchemaUserSql.DELETE_USER)) {
+        SQLiteConnection dbConnection = new SQLiteConnection(dbEnv);
+        try (Connection connection = dbConnection.getConnection();
+                PreparedStatement statement = connection.prepareStatement(SchemaUserSql.DELETE_USER)) {
 
             statement.setInt(1, user.getId());
             statement.executeUpdate();
@@ -167,6 +181,8 @@ public class DbUserDaoImpl implements UserDao {
         } catch (SQLException e) {
             e.printStackTrace();
             // Handle database access error
+        } finally {
+            dbConnection.closeConnection();
         }
     }
 
@@ -176,12 +192,16 @@ public class DbUserDaoImpl implements UserDao {
     @Override
     public void dropUserTable() {
         System.out.println("DROP user table");
-        try (PreparedStatement statement = connection.prepareStatement(SchemaUserSql.DROP_TABLE)) {
+        SQLiteConnection dbConnection = new SQLiteConnection(dbEnv);
+        try (Connection connection = dbConnection.getConnection();
+                PreparedStatement statement = connection.prepareStatement(SchemaUserSql.DROP_TABLE)) {
             statement.executeUpdate();
             System.out.println("DROP_TABLE is done...");
         } catch (SQLException e) {
             e.printStackTrace();
             // Handle database access error
+        } finally {
+            dbConnection.closeConnection();
         }
     }
 
@@ -191,9 +211,10 @@ public class DbUserDaoImpl implements UserDao {
     @Override
     public void createUserTable() {
         System.out.println("CREATE user table");
+        SQLiteConnection dbConnection = new SQLiteConnection(dbEnv);
+        try (Connection connection = dbConnection.getConnection();
+                PreparedStatement statement = connection.prepareStatement(SchemaUserSql.CREATE_TABLE);){
 
-        try {
-            PreparedStatement statement = connection.prepareStatement(SchemaUserSql.CREATE_TABLE);
             System.out.println("CREATE_TABLE: " + SchemaUserSql.CREATE_TABLE);
             statement.executeUpdate();
             System.out.println("CREATE_TABLE is done...");
@@ -201,6 +222,8 @@ public class DbUserDaoImpl implements UserDao {
         } catch (SQLException e) {
             e.printStackTrace();
             // Handle database access error
+        } finally {
+            dbConnection.closeConnection();
         }
     }
 

@@ -11,13 +11,15 @@ package com.sidequest.parley.dao;
  * timestamp: the timestamp of the chat message
  */
 public class SchemaChatMessageSql {
-    public static final String INSERT_CHAT_MESSAGE = "INSERT INTO chat_message (id, chatRoomId, userId, content, timestamp) VALUES (?, ?, ?, ?, ?)";
-    public static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS chat_message (id INTEGER PRIMARY KEY, chatRoomId INTEGER,userId INTEGER, content TEXT NOT NULL,   timestamp TEXT NOT NULL,   FOREIGN KEY (userId) REFERENCES user(userId),   FOREIGN KEY (chatRoomId) REFERENCES chat_room(chatRoomId))";
+    //public static final String INSERT_CHAT_MESSAGE = "INSERT INTO chat_message (id, chatRoomId, userId, content, timestamp) VALUES (?, ?, ?, ?, ?)";
+    public static final String INSERT_CHAT_MESSAGE = "INSERT INTO chat_message (chatRoomId, userId, content, timestamp) VALUES (?, ?, ?, ?)";
+    //public static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS chat_message (id INTEGER NOT NULL, chatRoomId INTEGER,userId INTEGER, content TEXT NOT NULL,   timestamp TEXT NOT NULL,   FOREIGN KEY (userId) REFERENCES user(userId),   FOREIGN KEY (chatRoomId) REFERENCES chat_room(chatRoomId))";
+    public static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS chat_message (id INTEGER PRIMARY KEY AUTOINCREMENT, chatRoomId INTEGER,userId INTEGER, content TEXT NOT NULL,   timestamp TEXT NOT NULL,   FOREIGN KEY (userId) REFERENCES user(userId),   FOREIGN KEY (chatRoomId) REFERENCES chat_room(chatRoomId))";
     public static final String DROP_TABLE = "DROP TABLE IF EXISTS chat_message";
     public static final String DELETE_CHAT_MESSAGE = "DELETE FROM chat_message WHERE id = ?";
 
     public static final String DELETE_CHAT_MESSAGE_BY_CHAT_ROOM_ID = "DELETE FROM chat_message WHERE chatRoomId = ?";
-    public static final String SELECT_ALL_CHAT_MESSAGES_BY_CHAT_ROOM_ID = "SELECT * FROM chat_message WHERE chatRoomId = ? ORDER BY timestamp ASC";
+    public static final String SELECT_ALL_CHAT_MESSAGES_BY_CHAT_ROOM_ID = "SELECT * FROM chat_message WHERE chatRoomId = ? ORDER BY id ASC";
     public static final String UPDATE_CHAT_MESSAGE = "UPDATE chat_message SET content = ? WHERE id = ?";
 
     private SchemaChatMessageSql() {

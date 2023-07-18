@@ -5,11 +5,13 @@ import com.sidequest.parley.dao.DbChatRoomUsersImpl;
 import com.sidequest.parley.dao.DbUserDaoImpl;
 import com.sidequest.parley.dao.DbChatRoomDaoImpl;
 
+import java.sql.SQLException;
+
 /**
  * This class is used to generate the database schema for the ChatMessage, ChatRoom, and User tables.
  */
 public class GenerateDBschema {
-    private GenerateDBschema(String dbEnv) {
+    private GenerateDBschema(String dbEnv) throws SQLException {
         if (dbEnv == null || dbEnv.isEmpty()) {
             throw new IllegalArgumentException("dbEnv cannot be null or empty");
         }
@@ -21,7 +23,7 @@ public class GenerateDBschema {
         }
     }
 
-    private static void buildDatabase(String dbEnv) {
+    private static void buildDatabase(String dbEnv) throws SQLException {
         DbUserDaoImpl dbUserDao = new DbUserDaoImpl(dbEnv);
         DbChatMessageDaoImpl dbChatMessageDao = new DbChatMessageDaoImpl(dbEnv);
         DbChatRoomDaoImpl dbChatRoomDao = new DbChatRoomDaoImpl(dbEnv);
@@ -34,7 +36,7 @@ public class GenerateDBschema {
         dbChatMessageDao.createChatMessageTable();
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         String dbEnv = "prod";
         //I need to check that I have 1 argument or if the argument is null or empty to set the dbEnv to prod
         if (args.length != 1 || args[0] == null || args[0].isEmpty()) {

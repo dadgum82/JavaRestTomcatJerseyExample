@@ -18,7 +18,12 @@ public class UserService {
     DbUserDaoImpl dao;
 
     public UserService() throws FileNotFoundException, IOException {
-        dao = new DbUserDaoImpl("prod");
+        this("prod");
+
+    }
+
+    public UserService(String dbEnv) throws FileNotFoundException, IOException {
+        dao = new DbUserDaoImpl(dbEnv);
         users = new ArrayList<>();
         this.initalizeUsers();
     }

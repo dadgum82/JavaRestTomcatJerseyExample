@@ -1,5 +1,7 @@
 package com.sidequest.parley.controller;
 
+import com.sidequest.parley.exception.ForeignKeyConstraintException;
+import com.sidequest.parley.exception.ForeignKeyConstraintExceptionMapper;
 import com.sidequest.parley.model.ChatRoom;
 import com.sidequest.parley.model.ChatRoomInput;
 import com.sidequest.parley.service.ChatRoomService;
@@ -9,7 +11,9 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Base64;
 
 @Path("/chatrooms")
@@ -72,9 +76,15 @@ public class ChatRoomController {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ChatRoom createChatRoom(ChatRoomInput chatRoomInput) throws IOException {
+    public ChatRoom createChatRoom(ChatRoomInput chatRoomInput) throws IOException, SQLException, ForeignKeyConstraintException {
         ChatRoomService crs = new ChatRoomService();
-        return crs.createChatRoom(chatRoomInput.getName(),chatRoomInput.getModeratorId(),chatRoomInput.getUserIds(),chatRoomInput.getIcon());
+        try {
+            return crs.createChatRoom(chatRoomInput.getName(), chatRoomInput.getModeratorId(), chatRoomInput.getUserIds(), chatRoomInput.getIcon());
+        } catch (ForeignKeyConstraintException e) {
+            throw new ForeignKeyConstraintException();
+        } catch (SQLException e) {
+            throw new SQLException();
+        }
     }
 
     /**

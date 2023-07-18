@@ -1,21 +1,24 @@
 package com.sidequest.parley.service;
 
 import com.sidequest.parley.dao.DbChatRoomDaoImpl;
+import com.sidequest.parley.exception.ForeignKeyConstraintException;
 import com.sidequest.parley.model.ChatRoom;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ChatRoomService {
+    DbChatRoomDaoImpl dao;
     private int CHAT_ROOM_COUNT;
     private List<ChatRoom> chatRooms;
-
-    DbChatRoomDaoImpl dao;
     private String dbEnv;
+
     public ChatRoomService() {
         this("prod"); // default to prod. This is constructor chaining.
     }
-    public ChatRoomService(String dbEnv){
+
+    public ChatRoomService(String dbEnv) {
         this.CHAT_ROOM_COUNT = 0;
         this.chatRooms = new ArrayList<>();
         dao = new DbChatRoomDaoImpl(dbEnv);
@@ -50,15 +53,16 @@ public class ChatRoomService {
     }
 
 
-    public ChatRoom createChatRoom(String name, int moderatorId) {
+    public ChatRoom createChatRoom(String name, int moderatorId) throws SQLException, ForeignKeyConstraintException {
         return createChatRoom(name, moderatorId, null);
     }
 
-    public ChatRoom createChatRoom(String name, int moderatorId, byte[] icon) {
+    public ChatRoom createChatRoom(String name, int moderatorId, byte[] icon) throws SQLException, ForeignKeyConstraintException {
         return createChatRoom(name, moderatorId, null, icon);
     }
-    public ChatRoom createChatRoom(String name, int moderatorId, List<Integer> userIds, byte[] icon) {
-        if(name == null || name.isEmpty()){
+
+    public ChatRoom createChatRoom(String name, int moderatorId, List<Integer> userIds, byte[] icon) throws SQLException, ForeignKeyConstraintException {
+        if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException("Chat room name cannot be null or empty");
         }
         int chatRoomCount = this.CHAT_ROOM_COUNT;
@@ -73,9 +77,19 @@ public class ChatRoomService {
         }
 
         ChatRoom chatRoom = initializeChatRoomHelper(chatRoomCount, name, moderatorId, userIds, icon);
+        chatRoom = addModeratorToUserIDs(chatRoom, moderatorId, userIds);
 
-        this.chatRooms.add(chatRoom);
         dao.createChatRoom(chatRoom);
+        this.chatRooms.add(chatRoom);
+        return chatRoom;
+    }
+
+    private ChatRoom addModeratorToUserIDs(ChatRoom chatRoom, int moderatorId, List<Integer> userIds) {
+        if (userIds == null || userIds.isEmpty()) {
+            chatRoom.addUserId(moderatorId);
+        } else if (!userIds.contains(moderatorId)) {
+            chatRoom.addUserId(moderatorId);
+        }
         return chatRoom;
     }
 
@@ -86,9 +100,9 @@ public class ChatRoomService {
 
         if (hasIcon && hasUserIds) {
             chatRoom = new ChatRoom(chatRoomId, name, moderatorId, icon, userIds);
-        } else if(hasIcon && !hasUserIds){
+        } else if (hasIcon && !hasUserIds) {
             chatRoom = new ChatRoom(chatRoomId, name, moderatorId, icon);
-        } else if(!hasIcon && hasUserIds){
+        } else if (!hasIcon && hasUserIds) {
             chatRoom = new ChatRoom(chatRoomId, name, moderatorId, userIds);
         } else {
             chatRoom = new ChatRoom(chatRoomId, name, moderatorId);
@@ -97,9 +111,9 @@ public class ChatRoomService {
     }
 
 
-
-
-    /** Delete a chat room by id
+    /**
+     * Delete a chat room by id
+     *
      * @param chatId
      * @return true if chat room was deleted, false if chat room was not found
      */
@@ -113,7 +127,9 @@ public class ChatRoomService {
         return false;
     }
 
-    /** Update a chat room by id
+    /**
+     * Update a chat room by id
+     *
      * @param chatId
      * @param name
      * @param icon
@@ -129,7 +145,9 @@ public class ChatRoomService {
         return chatRoom;
     }
 
-    /** Update a chat room by id
+    /**
+     * Update a chat room by id
+     *
      * @param chatId
      * @param name
      * @param icon

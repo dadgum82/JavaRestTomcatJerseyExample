@@ -1,9 +1,9 @@
 package com.sidequest.parley.dao;
 
+import com.sidequest.parley.exception.ForeignKeyConstraintException;
 import com.sidequest.parley.model.ChatRoom;
-import com.sidequest.parley.model.User;
 
-import java.io.IOException;
+import javax.swing.plaf.nimbus.State;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,34 +23,38 @@ import java.util.List;
  */
 public class DbChatRoomDaoImpl implements ChatRoomDao {
     Statement statement;
-    private SQLiteConnection dbConnection;
-    private Connection connection;
     private String dbEnv;
 
     public DbChatRoomDaoImpl(String dbEnv) {
-        dbConnection = new SQLiteConnection(dbEnv);
-        connection = dbConnection.getConnection();
-        try {
-            statement = connection.createStatement();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        this.dbEnv = dbEnv;
     }
-
-
     @Override
-    public ChatRoom getChatRoom(int id) {
-        return null;
+    public boolean isChatRoom(int id) throws SQLException {
+        SQLiteConnection dbConnection = new SQLiteConnection(dbEnv);
+        try {
+            Connection connection = dbConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(SchemaChatRoomSql.SELECT_CHAT_ROOM_BY_ID);
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return true;
+            }
+            return false;
+        } catch (SQLException e) {
+            throw new SQLException("Error in isChatRoom method");
+        } finally {
+            dbConnection.closeConnection();
+        }
     }
 
     @Override
     public List<ChatRoom> getAllChatRooms() {
         List<ChatRoom> chatRooms = new ArrayList<>();
-        try {
-            String[] arrUserIds;
-            statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery(SchemaChatRoomSql.SELECT_ALL_CHAT_ROOMS);
-            //"INSERT INTO chat_room (chatRoomId, name, moderatorId, userIds, icon) VALUES (?, ?, ?, ?, ?)";
+        SQLiteConnection dbConnection = new SQLiteConnection(dbEnv);
+        try (Connection connection = dbConnection.getConnection();
+             Statement statement = connection.createStatement();
+             ResultSet rs = statement.executeQuery(SchemaChatRoomSql.SELECT_ALL_CHAT_ROOMS)) {
+
             while (rs.next()) {
                 int chatRoomId = rs.getInt("chatRoomId");
                 String name = rs.getString("name");
@@ -61,6 +65,8 @@ public class DbChatRoomDaoImpl implements ChatRoomDao {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            dbConnection.closeConnection();
         }
         return chatRooms;
     }
@@ -68,8 +74,9 @@ public class DbChatRoomDaoImpl implements ChatRoomDao {
     @Override
     public List<Integer> getUserIdsByChatRoomId(int chatRoomId) {
         List<Integer> arrUserIds = new ArrayList<>();
-        try {
-            PreparedStatement statement = connection.prepareStatement(SchemaChatRoomUsersSql.SELECT_CHAT_ROOM_USERS_BY_CHAT_ROOM_ID);
+        SQLiteConnection dbConnection = new SQLiteConnection(dbEnv);
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SchemaChatRoomUsersSql.SELECT_CHAT_ROOM_USERS_BY_CHAT_ROOM_ID);) {
             statement.setInt(1, chatRoomId);
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
@@ -79,14 +86,17 @@ public class DbChatRoomDaoImpl implements ChatRoomDao {
             return arrUserIds;
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            dbConnection.closeConnection();
         }
         return arrUserIds;
     }
 
     @Override
     public void addUserToChatRoom(int chatRoomId, int userId) {
-        try {
-            PreparedStatement statement = connection.prepareStatement(SchemaChatRoomUsersSql.INSERT_CHAT_ROOM_USERS);
+        SQLiteConnection dbConnection = new SQLiteConnection(dbEnv);
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SchemaChatRoomUsersSql.INSERT_CHAT_ROOM_USERS);) {
             statement.setInt(1, chatRoomId);
             statement.setInt(2, userId);
             statement.executeUpdate();
@@ -95,6 +105,8 @@ public class DbChatRoomDaoImpl implements ChatRoomDao {
         } catch (SQLException e) {
             e.printStackTrace();
             // Handle database access error
+        } finally {
+            dbConnection.closeConnection();
         }
     }
 
@@ -102,9 +114,9 @@ public class DbChatRoomDaoImpl implements ChatRoomDao {
     public void addUsersToChatRoom(int chatRoomId, List<Integer> userIds) {
         System.out.println("INSERT_CHAT_ROOM_USERS is called...");
         System.out.println("userIds Size: " + userIds.size());
-        try {
-            PreparedStatement statement = connection.prepareStatement(SchemaChatRoomUsersSql.INSERT_CHAT_ROOM_USERS);
-
+        SQLiteConnection dbConnection = new SQLiteConnection(dbEnv);
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SchemaChatRoomUsersSql.INSERT_CHAT_ROOM_USERS);) {
             for (int userId : userIds) {
                 statement.setInt(1, chatRoomId);
                 statement.setInt(2, userId);
@@ -116,13 +128,17 @@ public class DbChatRoomDaoImpl implements ChatRoomDao {
         } catch (SQLException e) {
             e.printStackTrace();
             // Handle database access error
+        } finally {
+            dbConnection.closeConnection();
         }
     }
 
     @Override
-    public void createChatRoom(ChatRoom chatRoom) {
-        try {
-            PreparedStatement statement = connection.prepareStatement(SchemaChatRoomSql.INSERT_CHAT_ROOM);
+    public void createChatRoom(ChatRoom chatRoom) throws SQLException, ForeignKeyConstraintException {
+        SQLiteConnection dbConnection = new SQLiteConnection(dbEnv);
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SchemaChatRoomSql.INSERT_CHAT_ROOM);
+        ) {
             statement.setInt(1, chatRoom.getChatRoomId());
             statement.setString(2, chatRoom.getName());
             statement.setInt(3, chatRoom.getModeratorId());
@@ -130,13 +146,18 @@ public class DbChatRoomDaoImpl implements ChatRoomDao {
             statement.executeUpdate();
             System.out.println("INSERT_CHAT_ROOM is done...");
             addUsersToChatRoom(chatRoom.getChatRoomId(), chatRoom.getUserIds());
-
         } catch (SQLException e) {
+            System.out.println("Error code: " + e.getErrorCode());
             e.printStackTrace();
-            // Handle database access error
+            if (e.getErrorCode() == 19) {
+                throw new ForeignKeyConstraintException();
+            } else {
+                throw new SQLException();
+            }
+        } finally {
+            dbConnection.closeConnection();
         }
     }
-
 
     /**
      * this method is used to get a chat room
@@ -158,7 +179,9 @@ public class DbChatRoomDaoImpl implements ChatRoomDao {
         // this method should delete a chat room from the database
         // it should delete the chat room from the chat room table
         // it should delete the chat messages from the chat message table
-        try (PreparedStatement statement = connection.prepareStatement(SchemaChatRoomSql.DELETE_CHAT_ROOM)) {
+        SQLiteConnection dbConnection = new SQLiteConnection(dbEnv);
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SchemaChatRoomSql.DELETE_CHAT_ROOM)) {
             statement.setInt(1, chatRoom.getChatRoomId());
             statement.executeUpdate();
             System.out.println("DELETE_CHAT_ROOM is done...");
@@ -169,7 +192,8 @@ public class DbChatRoomDaoImpl implements ChatRoomDao {
         }
 
         //it should delete messages with the chat room id from the chat message table
-        try (PreparedStatement statement = connection.prepareStatement(SchemaChatMessageSql.DELETE_CHAT_MESSAGE)) {
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SchemaChatMessageSql.DELETE_CHAT_MESSAGE)) {
             statement.setInt(1, chatRoom.getChatRoomId());
             statement.executeUpdate();
             System.out.println("DELETE_CHAT_MESSAGE is done...");
@@ -177,6 +201,8 @@ public class DbChatRoomDaoImpl implements ChatRoomDao {
         } catch (SQLException e) {
             e.printStackTrace();
             // Handle database access error
+        } finally {
+            dbConnection.closeConnection();
         }
 
     }
@@ -187,13 +213,17 @@ public class DbChatRoomDaoImpl implements ChatRoomDao {
     @Override
     public void dropChatRoomTable() {
         System.out.println("DROP chat room table");
-        try (PreparedStatement statement = connection.prepareStatement(SchemaChatRoomSql.DROP_TABLE)) {
+        SQLiteConnection dbConnection = new SQLiteConnection(dbEnv);
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SchemaChatRoomSql.DROP_TABLE)) {
             statement.executeUpdate();
             System.out.println("DROP_TABLE is done...");
 
         } catch (SQLException e) {
             e.printStackTrace();
             // Handle database access error
+        } finally {
+            dbConnection.closeConnection();
         }
     }
 
@@ -203,8 +233,10 @@ public class DbChatRoomDaoImpl implements ChatRoomDao {
     @Override
     public void createChatRoomTable() {
         System.out.println("CREATE chat room table");
-        try {
-            PreparedStatement statement = connection.prepareStatement(SchemaChatRoomSql.CREATE_TABLE);
+        SQLiteConnection dbConnection = new SQLiteConnection(dbEnv);
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SchemaChatRoomSql.CREATE_TABLE);
+        ) {
             System.out.println("CREATE_TABLE: " + SchemaChatRoomSql.CREATE_TABLE);
             statement.executeUpdate();
             System.out.println("CREATE_TABLE is done...");
@@ -212,6 +244,8 @@ public class DbChatRoomDaoImpl implements ChatRoomDao {
         } catch (SQLException e) {
             e.printStackTrace();
             // Handle database access error
+        } finally {
+            dbConnection.closeConnection();
         }
     }
 }

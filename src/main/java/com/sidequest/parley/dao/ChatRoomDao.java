@@ -1,15 +1,13 @@
 package com.sidequest.parley.dao;
 
-import com.sidequest.parley.model.ChatMessage;
 import com.sidequest.parley.model.ChatRoom;
-import com.sidequest.parley.model.User;
 
-import java.io.IOException;
-import java.util.ArrayList;
+import java.sql.SQLException;
 import java.util.List;
 
 public interface ChatRoomDao {
-    public ChatRoom getChatRoom(int id);
+
+    boolean isChatRoom(int id) throws SQLException;
 
     List<ChatRoom> getAllChatRooms();
 
@@ -20,7 +18,7 @@ public interface ChatRoomDao {
 
     void addUsersToChatRoom(int chatRoomId, List<Integer> userIds);
 
-    public void createChatRoom(ChatRoom chatRoom);
+    public void createChatRoom(ChatRoom chatRoom) throws SQLException;
     public void updateChatRoom(ChatRoom chatRoom);
     public void deleteChatRoom(ChatRoom chatRoom);
     void dropChatRoomTable();

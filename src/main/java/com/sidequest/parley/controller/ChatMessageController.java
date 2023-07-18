@@ -68,7 +68,7 @@ public class ChatMessageController {
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getChatMessages(@PathParam("id") int chatID) throws IOException {
+	public String getChatMessages(@PathParam("id") int chatID) throws IOException, SQLException {
 		ChatMessageService cms = new ChatMessageService(chatID);
 		JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
 		for (ChatMessage cm : cms.getChatMessages()) {
