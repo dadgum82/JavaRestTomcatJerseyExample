@@ -38,7 +38,7 @@ public class DbChatMessageDaoImpl implements ChatMessageDao {
         }
 
         try (Connection connection = dbConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SchemaChatMessageSql.SELECT_ALL_CHAT_MESSAGES_BY_CHAT_ROOM_ID);){
+             PreparedStatement statement = connection.prepareStatement(SchemaChatMessageSql.SELECT_ALL_CHAT_MESSAGES_BY_CHAT_ROOM_ID)){
             statement.setInt(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet == null) {
@@ -72,7 +72,7 @@ public class DbChatMessageDaoImpl implements ChatMessageDao {
         System.out.println("CREATE chat message");
         SQLiteConnection dbConnection = new SQLiteConnection(dbEnv);
         try (Connection connection = dbConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SchemaChatMessageSql.INSERT_CHAT_MESSAGE);) {
+             PreparedStatement statement = connection.prepareStatement(SchemaChatMessageSql.INSERT_CHAT_MESSAGE)) {
             //"INSERT INTO chat_message (chatRoomId, senderId, content, timestamp) VALUES (?, ?, ?, ?)";
             //statement.setInt(1, chatMessage.getId());
             statement.setInt(1, chatMessage.getChatRoomId());
@@ -98,7 +98,7 @@ public class DbChatMessageDaoImpl implements ChatMessageDao {
         System.out.println("UPDATE chat message");
         SQLiteConnection dbConnection = new SQLiteConnection(dbEnv);
         try (Connection connection = dbConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SchemaChatMessageSql.UPDATE_CHAT_MESSAGE);){
+             PreparedStatement statement = connection.prepareStatement(SchemaChatMessageSql.UPDATE_CHAT_MESSAGE)){
 
             statement.setInt(1, chatMessage.getId());
             statement.setString(2, chatMessage.getContent());
@@ -120,7 +120,7 @@ public class DbChatMessageDaoImpl implements ChatMessageDao {
         System.out.println("DELETE chat message");
         SQLiteConnection dbConnection = new SQLiteConnection(dbEnv);
         try (Connection connection = dbConnection.getConnection();
-                PreparedStatement statement = connection.prepareStatement(SchemaChatMessageSql.DELETE_CHAT_MESSAGE);){
+                PreparedStatement statement = connection.prepareStatement(SchemaChatMessageSql.DELETE_CHAT_MESSAGE)){
 
             statement.setInt(1, chatMessage.getId());
             System.out.println("DELETE_CHAT_MESSAGE: " + SchemaChatMessageSql.DELETE_CHAT_MESSAGE);
@@ -157,7 +157,7 @@ public class DbChatMessageDaoImpl implements ChatMessageDao {
         System.out.println("CREATE chat message table");
         SQLiteConnection dbConnection = new SQLiteConnection(dbEnv);
         try(Connection connection = dbConnection.getConnection();
-            PreparedStatement statement = connection.prepareStatement(SchemaChatMessageSql.CREATE_TABLE);){
+            PreparedStatement statement = connection.prepareStatement(SchemaChatMessageSql.CREATE_TABLE)){
             System.out.println("CREATE_TABLE: " + SchemaChatMessageSql.CREATE_TABLE);
             statement.executeUpdate();
             System.out.println("CREATE_TABLE is done...");

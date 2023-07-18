@@ -11,7 +11,7 @@ import java.util.List;
 public class ChatRoomService {
     DbChatRoomDaoImpl dao;
     private int CHAT_ROOM_COUNT;
-    private List<ChatRoom> chatRooms;
+    private final List<ChatRoom> chatRooms;
     private String dbEnv;
 
     public ChatRoomService() {
@@ -53,15 +53,15 @@ public class ChatRoomService {
     }
 
 
-    public ChatRoom createChatRoom(String name, int moderatorId) throws SQLException, ForeignKeyConstraintException {
+    public ChatRoom createChatRoom(String name, int moderatorId) throws SQLException {
         return createChatRoom(name, moderatorId, null);
     }
 
-    public ChatRoom createChatRoom(String name, int moderatorId, byte[] icon) throws SQLException, ForeignKeyConstraintException {
+    public ChatRoom createChatRoom(String name, int moderatorId, byte[] icon) throws SQLException {
         return createChatRoom(name, moderatorId, null, icon);
     }
 
-    public ChatRoom createChatRoom(String name, int moderatorId, List<Integer> userIds, byte[] icon) throws SQLException, ForeignKeyConstraintException {
+    public ChatRoom createChatRoom(String name, int moderatorId, List<Integer> userIds, byte[] icon) throws SQLException {
         if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException("Chat room name cannot be null or empty");
         }
@@ -73,7 +73,7 @@ public class ChatRoomService {
         System.out.println("Chat room icon: " + icon);
         if (userIds != null) {
             System.out.println("Chat room user id Size: " + userIds.size());
-            System.out.println("Chat room user ids: " + userIds.toString());
+            System.out.println("Chat room user ids: " + userIds);
         }
 
         ChatRoom chatRoom = initializeChatRoomHelper(chatRoomCount, name, moderatorId, userIds, icon);

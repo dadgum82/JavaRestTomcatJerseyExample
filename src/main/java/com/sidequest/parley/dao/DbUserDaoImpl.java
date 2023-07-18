@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class DbUserDaoImpl implements UserDao {
     //private SQLiteConnection dbConnection;
-private String dbEnv;
+private final String dbEnv;
     /**
      * Constructor for DbUserDaoImpl.
      *
@@ -213,7 +213,7 @@ private String dbEnv;
         System.out.println("CREATE user table");
         SQLiteConnection dbConnection = new SQLiteConnection(dbEnv);
         try (Connection connection = dbConnection.getConnection();
-                PreparedStatement statement = connection.prepareStatement(SchemaUserSql.CREATE_TABLE);){
+                PreparedStatement statement = connection.prepareStatement(SchemaUserSql.CREATE_TABLE)){
 
             System.out.println("CREATE_TABLE: " + SchemaUserSql.CREATE_TABLE);
             statement.executeUpdate();

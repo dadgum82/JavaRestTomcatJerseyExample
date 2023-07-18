@@ -21,7 +21,7 @@ import org.apache.commons.csv.CSVRecord;
 public class FileHandler {
 	private final String DIRECTORY;
 	private final String FILENAME;
-	private Path filePath;
+	private final Path filePath;
 
 	public FileHandler(String directory, String fileName) {
 
@@ -83,7 +83,7 @@ public class FileHandler {
 		}
 	}
 
-	public List<String[]> readCSVFile() throws FileNotFoundException, IOException {
+	public List<String[]> readCSVFile() throws IOException {
 		List<String[]> records = new ArrayList<>();
 		try (CSVParser parser = new CSVParser(new FileReader(this.filePath.toString()), CSVFormat.DEFAULT)) {
 			for (CSVRecord record : parser) {

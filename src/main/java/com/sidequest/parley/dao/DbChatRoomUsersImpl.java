@@ -7,7 +7,7 @@ import java.util.List;
 
 public class DbChatRoomUsersImpl implements ChatRoomUsersDao {
    // private SQLiteConnection dbConnection;
-    private String dbEnv;
+    private final String dbEnv;
 
     public DbChatRoomUsersImpl(String dbEnv) {
         this.dbEnv = dbEnv;
@@ -40,7 +40,7 @@ public class DbChatRoomUsersImpl implements ChatRoomUsersDao {
     public void dropChatRoomUsersTable() {
         SQLiteConnection dbConnection = new SQLiteConnection(dbEnv);
         try (Connection connection = dbConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SchemaChatRoomUsersSql.DROP_TABLE);
+             PreparedStatement statement = connection.prepareStatement(SchemaChatRoomUsersSql.DROP_TABLE)
         ){
             //statement.execute(SchemaChatRoomUsersSql.DROP_TABLE);
             statement.executeUpdate();
@@ -61,7 +61,7 @@ public class DbChatRoomUsersImpl implements ChatRoomUsersDao {
     public void createChatRoomUsersTable() {
         SQLiteConnection dbConnection = new SQLiteConnection(dbEnv);
         try (Connection connection = dbConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SchemaChatRoomUsersSql.CREATE_TABLE);
+             PreparedStatement statement = connection.prepareStatement(SchemaChatRoomUsersSql.CREATE_TABLE)
         ){
             System.out.println("CREATE_TABLE: " + SchemaChatRoomUsersSql.CREATE_TABLE);
            // statement.execute(SchemaChatRoomUsersSql.CREATE_TABLE);
@@ -77,7 +77,7 @@ public class DbChatRoomUsersImpl implements ChatRoomUsersDao {
     public boolean isUserInChatRoom(int userId, int chatRoomId) {
         SQLiteConnection dbConnection = new SQLiteConnection(dbEnv);
         try (Connection connection = dbConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SchemaChatRoomUsersSql.SELECT_USER_IN_CHAT_ROOM);
+             PreparedStatement statement = connection.prepareStatement(SchemaChatRoomUsersSql.SELECT_USER_IN_CHAT_ROOM)
         ){
             statement.setInt(1, userId);
             statement.setInt(2, chatRoomId);

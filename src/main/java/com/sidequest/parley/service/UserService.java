@@ -14,21 +14,21 @@ import com.sidequest.parley.util.FileHandler;
 
 public class UserService {
     private int USERS_COUNT;
-    private List<User> users;
+    private final List<User> users;
     DbUserDaoImpl dao;
 
-    public UserService() throws FileNotFoundException, IOException {
+    public UserService() throws IOException {
         this("prod");
 
     }
 
-    public UserService(String dbEnv) throws FileNotFoundException, IOException {
+    public UserService(String dbEnv) throws IOException {
         dao = new DbUserDaoImpl(dbEnv);
         users = new ArrayList<>();
         this.initalizeUsers();
     }
 
-    private void initalizeUsers() throws FileNotFoundException, IOException {
+    private void initalizeUsers() throws IOException {
         this.users.addAll(dao.getAllUsers());
         this.USERS_COUNT = this.users.size();
     }

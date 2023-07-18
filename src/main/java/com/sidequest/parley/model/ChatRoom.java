@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ChatRoom {
-    private int chatRoomId;                         // Unique identifier for the chat room
-    private List<Integer> userIds;          // List of users in the chat room
+    private final int chatRoomId;                         // Unique identifier for the chat room
+    private final List<Integer> userIds;          // List of users in the chat room
     private String name;                    // Name of the chat room
     private byte[] icon;                    // Icon representing the chat room (image)
     private InputStream iconStream;         // Input stream for the chat room icon

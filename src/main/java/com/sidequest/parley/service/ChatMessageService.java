@@ -18,7 +18,7 @@ import com.sidequest.parley.util.FileHandler;
 
 public class ChatMessageService {
     private int CHAT_MESSAGE_COUNT;
-    private List<ChatMessage> chatMessages;
+    private final List<ChatMessage> chatMessages;
 
     DbChatMessageDaoImpl dao;
     UserService us;
@@ -45,7 +45,7 @@ public class ChatMessageService {
         this.initalizeChat(chatRoomId);
     }
 
-    private void initalizeChat(int chatRoomId) throws FileNotFoundException, IOException, SQLException {
+    private void initalizeChat(int chatRoomId) throws IOException, SQLException {
         chatMessages.addAll(dao.getAllChatMessages(chatRoomId));
         this.CHAT_MESSAGE_COUNT = chatMessages.size();
            }

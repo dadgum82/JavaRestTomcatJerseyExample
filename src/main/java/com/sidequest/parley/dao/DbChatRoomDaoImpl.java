@@ -23,7 +23,7 @@ import java.util.List;
  */
 public class DbChatRoomDaoImpl implements ChatRoomDao {
     Statement statement;
-    private String dbEnv;
+    private final String dbEnv;
 
     public DbChatRoomDaoImpl(String dbEnv) {
         this.dbEnv = dbEnv;
@@ -36,10 +36,7 @@ public class DbChatRoomDaoImpl implements ChatRoomDao {
             PreparedStatement statement = connection.prepareStatement(SchemaChatRoomSql.SELECT_CHAT_ROOM_BY_ID);
             statement.setInt(1, id);
             ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                return true;
-            }
-            return false;
+            return resultSet.next();
         } catch (SQLException e) {
             throw new SQLException("Error in isChatRoom method");
         } finally {
@@ -76,7 +73,7 @@ public class DbChatRoomDaoImpl implements ChatRoomDao {
         List<Integer> arrUserIds = new ArrayList<>();
         SQLiteConnection dbConnection = new SQLiteConnection(dbEnv);
         try (Connection connection = dbConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SchemaChatRoomUsersSql.SELECT_CHAT_ROOM_USERS_BY_CHAT_ROOM_ID);) {
+             PreparedStatement statement = connection.prepareStatement(SchemaChatRoomUsersSql.SELECT_CHAT_ROOM_USERS_BY_CHAT_ROOM_ID)) {
             statement.setInt(1, chatRoomId);
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
@@ -96,7 +93,7 @@ public class DbChatRoomDaoImpl implements ChatRoomDao {
     public void addUserToChatRoom(int chatRoomId, int userId) {
         SQLiteConnection dbConnection = new SQLiteConnection(dbEnv);
         try (Connection connection = dbConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SchemaChatRoomUsersSql.INSERT_CHAT_ROOM_USERS);) {
+             PreparedStatement statement = connection.prepareStatement(SchemaChatRoomUsersSql.INSERT_CHAT_ROOM_USERS)) {
             statement.setInt(1, chatRoomId);
             statement.setInt(2, userId);
             statement.executeUpdate();
@@ -116,11 +113,11 @@ public class DbChatRoomDaoImpl implements ChatRoomDao {
         System.out.println("userIds Size: " + userIds.size());
         SQLiteConnection dbConnection = new SQLiteConnection(dbEnv);
         try (Connection connection = dbConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SchemaChatRoomUsersSql.INSERT_CHAT_ROOM_USERS);) {
+             PreparedStatement statement = connection.prepareStatement(SchemaChatRoomUsersSql.INSERT_CHAT_ROOM_USERS)) {
             for (int userId : userIds) {
                 statement.setInt(1, chatRoomId);
                 statement.setInt(2, userId);
-                System.out.println(statement.toString());
+                System.out.println(statement);
                 statement.executeUpdate();
             }
             System.out.println("INSERT_CHAT_ROOM_USERS is done...");
@@ -134,10 +131,10 @@ public class DbChatRoomDaoImpl implements ChatRoomDao {
     }
 
     @Override
-    public void createChatRoom(ChatRoom chatRoom) throws SQLException, ForeignKeyConstraintException {
+    public void createChatRoom(ChatRoom chatRoom) throws SQLException {
         SQLiteConnection dbConnection = new SQLiteConnection(dbEnv);
         try (Connection connection = dbConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SchemaChatRoomSql.INSERT_CHAT_ROOM);
+             PreparedStatement statement = connection.prepareStatement(SchemaChatRoomSql.INSERT_CHAT_ROOM)
         ) {
             statement.setInt(1, chatRoom.getChatRoomId());
             statement.setString(2, chatRoom.getName());
@@ -235,7 +232,7 @@ public class DbChatRoomDaoImpl implements ChatRoomDao {
         System.out.println("CREATE chat room table");
         SQLiteConnection dbConnection = new SQLiteConnection(dbEnv);
         try (Connection connection = dbConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SchemaChatRoomSql.CREATE_TABLE);
+             PreparedStatement statement = connection.prepareStatement(SchemaChatRoomSql.CREATE_TABLE)
         ) {
             System.out.println("CREATE_TABLE: " + SchemaChatRoomSql.CREATE_TABLE);
             statement.executeUpdate();

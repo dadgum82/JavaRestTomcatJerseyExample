@@ -8,7 +8,7 @@ import java.util.List;
 
 public class UserDAO_old {
 
-	private SQLiteConnection dbConnection;
+	private final SQLiteConnection dbConnection;
 
 	public UserDAO_old() {
 		dbConnection = new SQLiteConnection();

@@ -18,9 +18,9 @@ public interface ChatRoomDao {
 
     void addUsersToChatRoom(int chatRoomId, List<Integer> userIds);
 
-    public void createChatRoom(ChatRoom chatRoom) throws SQLException;
-    public void updateChatRoom(ChatRoom chatRoom);
-    public void deleteChatRoom(ChatRoom chatRoom);
+    void createChatRoom(ChatRoom chatRoom) throws SQLException;
+    void updateChatRoom(ChatRoom chatRoom);
+    void deleteChatRoom(ChatRoom chatRoom);
     void dropChatRoomTable();
     void createChatRoomTable();
 }

@@ -76,7 +76,7 @@ public class ChatRoomController {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ChatRoom createChatRoom(ChatRoomInput chatRoomInput) throws IOException, SQLException, ForeignKeyConstraintException {
+    public ChatRoom createChatRoom(ChatRoomInput chatRoomInput) throws IOException, SQLException {
         ChatRoomService crs = new ChatRoomService();
         try {
             return crs.createChatRoom(chatRoomInput.getName(), chatRoomInput.getModeratorId(), chatRoomInput.getUserIds(), chatRoomInput.getIcon());
