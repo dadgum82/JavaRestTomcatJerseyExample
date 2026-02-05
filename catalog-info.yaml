@@ -1,0 +1,11 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: java-rest-tomcat-jersey-example
+  description: REST API backend for a home grown chat app
+  annotations:
+    github.com/project-slug: dadgum82/JavaRestTomcatJerseyExample
+spec:
+  type: service
+  owner: group:default/admins
+  lifecycle: experimental
