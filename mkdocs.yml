@@ -1,0 +1,6 @@
+site_name: Java REST API
+site_description: REST API backend for chat app
+plugins:
+  - techdocs-core
+nav:
+  - Home: index.md
